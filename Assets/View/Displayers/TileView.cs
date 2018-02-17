@@ -1,21 +1,22 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class TileView : Displayer
+public sealed class TileView : View<Tile>
 {
-    private Tile _tile;
-
-    public SpriteRenderer SpriteRenderer { get; }
-
-    public IDisplayable Target => _tile;
+    //private new void Awake()
+    //{
+    //    base.Start();
+    //}
 
     public override void Refresh()
     {
-        switch (_tile.Type)
+        gameObject.transform.position = new Vector3(Target.X, Target.Y, 0);
+
+        switch (Target.Type)
         {
             case TileType.Ground:
+                Sprite sprite = Resources.Load<Sprite>("ground");
+                SpriteRenderer.sprite = sprite;
                 break;
             case TileType.Water:
                 break;
