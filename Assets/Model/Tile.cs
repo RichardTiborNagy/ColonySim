@@ -10,6 +10,8 @@ public class Tile : IDisplayable
         Type = type;
     }
 
+    public Building Building { get; set; }
+
     public int X { get; }
     public int Y { get; }
     public TileType Type { get; private set; }
