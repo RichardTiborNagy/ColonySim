@@ -6,9 +6,12 @@ public abstract class View<T> : MonoBehaviour where T : IDisplayable
 
     protected T Target { get; set; }
 
+    //protected Random random;
+
     protected void Awake()
     {
         SpriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        //random = new Random();
     }
 
     public abstract void Refresh();

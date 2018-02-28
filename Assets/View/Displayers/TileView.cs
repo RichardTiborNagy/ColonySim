@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public sealed class TileView : View<Tile>
 {
@@ -15,8 +18,19 @@ public sealed class TileView : View<Tile>
         switch (Target.Type)
         {
             case TileType.Ground:
-                Sprite sprite = Resources.Load<Sprite>("ground");
-                SpriteRenderer.sprite = sprite;
+                List<Sprite> sprites = Resources.LoadAll<Sprite>("Tile/scifiTile_41").ToList();  //new List<Sprite>();
+                //sprites.Add(Resources.Load<Sprite>("Tile/scifiTile_41"));
+                //sprites.Add(Resources.Load<Sprite>("Tile/scifiTile_42"));
+                //sprites.Add(Resources.Load<Sprite>("Tile/scifiTile_27"));
+                //sprites.Add(Resources.Load<Sprite>("Tile/scifiTile_28"));
+                //sprites.Add(Resources.Load<Sprite>("Tile/scifiTile_29"));
+                //sprites.Add(Resources.Load<Sprite>("Tile/scifiTile_30"));
+                //sprites.Add(Resources.Load<Sprite>("Tile/scifiTile_01"));
+                //sprites.Add(Resources.Load<Sprite>("Tile/scifiTile_02"));
+                //sprites.Add(Resources.Load<Sprite>("Tile/scifiTile_15"));
+                //sprites.Add(Resources.Load<Sprite>("Tile/scifiTile_16"));
+
+                SpriteRenderer.sprite = sprites[Random.Range(0, sprites.Count)];
                 break;
             case TileType.Water:
                 break;
