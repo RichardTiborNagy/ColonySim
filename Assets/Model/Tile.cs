@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System;
+using System.Reflection;
 
 public class Tile : IDisplayable
 {
@@ -11,6 +12,8 @@ public class Tile : IDisplayable
     }
 
     public Building Building { get; set; }
+
+    public Resource Resource { get; set; }
 
     public int X { get; }
     public int Y { get; }
