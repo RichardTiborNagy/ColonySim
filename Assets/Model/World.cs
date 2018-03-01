@@ -17,7 +17,9 @@ public class World : IDisplayable
     }
 
     public Tile[,] Tiles { get; }
-    
+
+    public Tile this[int x, int y] => Tiles[x, y];
+
     public static World Current { get; private set; }
 
     public event Action Changed;
