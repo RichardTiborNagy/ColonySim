@@ -4,11 +4,11 @@ using System.Reflection;
 
 public class Tile : IDisplayable
 {
-    public Tile(int x, int y, TileType type)
+    public Tile(int x, int y)
     {
         X = x;
         Y = y;
-        Type = type;
+        //Type = type;
     }
 
     public Building Building { get; set; }
@@ -17,7 +17,7 @@ public class Tile : IDisplayable
 
     public int X { get; }
     public int Y { get; }
-    public TileType Type { get; private set; }
+    //public TileType Type { get; private set; }
 
     public event Action Changed;
 
