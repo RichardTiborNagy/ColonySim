@@ -9,13 +9,16 @@ public class World : IDisplayable
         {
             for (int j = 0; j < size; j++)
             {
-                Tiles[i, j] = new Tile(i, j, TileType.Ground);
+                Tiles[i, j] = new Tile(i, j);
             }
         }
+
+        Current = this;
     }
 
     public Tile[,] Tiles { get; }
     
+    public static World Current { get; private set; }
 
     public event Action Changed;
 
