@@ -11,6 +11,8 @@ public class Test : MonoBehaviour
 
     private float timer = 1f;
 
+    public GameObject Camera;
+
 	// Use this for initialization
 	void Start () {
 		World = new World(100);
@@ -19,6 +21,8 @@ public class Test : MonoBehaviour
 	        var tileView = Instantiate(TilePrefab).GetComponent<TileView>();
             tileView.ChangeTarget(tile);
         }
+
+	    Camera.transform.position = new Vector3(50, 50, -10);
 	}
 	
 	// Update is called once per frame
