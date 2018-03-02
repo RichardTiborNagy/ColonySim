@@ -6,17 +6,20 @@ using Random = UnityEngine.Random;
 
 public sealed class TileView : View<Tile>
 {
-    //private new void Awake()
-    //{
-    //    base.Start();
-    //}
+    private new void Awake()
+    {
+        base.Awake();
+        for (int i = 0; i < 8; i++)
+        {
+            Sprites.Add(SpriteLoader.GetSprite("Tile_" + i));
+        }
+    }
 
-    public override void Refresh()
+    protected override void Refresh()
     {
         gameObject.transform.position = new Vector3(Target.X, Target.Y, 0);
-
-        List<Sprite> sprites = Resources.LoadAll<Sprite>("Tile/scifiTile_41").ToList();
-        SpriteRenderer.sprite = sprites[Random.Range(0, sprites.Count)];
+        
+        SpriteRenderer.sprite = Sprites[Random.Range(0, Sprites.Count)];
 
         //switch (Target.Type)
         //{

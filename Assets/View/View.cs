@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public abstract class View<T> : MonoBehaviour where T : IDisplayable
 {
@@ -6,15 +7,15 @@ public abstract class View<T> : MonoBehaviour where T : IDisplayable
 
     protected T Target { get; set; }
 
-    //protected Random random;
+    protected List<Sprite> Sprites { get; private set; }
 
     protected void Awake()
     {
         SpriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-        //random = new Random();
+        Sprites = new List<Sprite>();
     }
 
-    public abstract void Refresh();
+    protected abstract void Refresh();
 
     public virtual void ChangeTarget(T target)
     {
