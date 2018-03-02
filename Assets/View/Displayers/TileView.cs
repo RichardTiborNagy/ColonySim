@@ -13,6 +13,8 @@ public sealed class TileView : View<Tile>
         {
             Sprites.Add(SpriteLoader.GetSprite("Tile_" + i));
         }
+
+        SpriteRenderer.sortingLayerName = "Tile";
     }
 
     protected override void Refresh()
