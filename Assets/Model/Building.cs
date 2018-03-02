@@ -5,21 +5,43 @@ using UnityEngine;
 
 public class Building : IDisplayable
 {
-    private Tile _tile;
-
-    private int _height;
-    private int _width;
+    public int Height { get; }
+    public int Width { get; }
 
     public string Type { get; }
 
-    public readonly int MovementCost;
-    
+    public Tile Tile { get; set; }
+
+    public int MovementCost { get; }
+
+    public int X => Tile.X;
+    public int Y => Tile.Y;
+
     public event Action Changed;
     public void OnChange()
     {
         Changed?.Invoke();
     }
 
-    //todo constructor for prototype creation
-    //todo copy constructor for prototype cloning
+    /// <summary>
+    /// Used to create prototypes
+    /// </summary>
+    public Building(string type, int height, int width, int movementCost)
+    {
+        Type = type;
+        Height = height;
+        Width = width;
+        MovementCost = movementCost;
+    }
+
+    /// <summary>
+    /// Copy constructor for cloning prototypes
+    /// </summary>
+    public Building(Building other)
+    {
+        Type = other.Type;
+        Height = other.Height;
+        Width = other.Width;
+        MovementCost = other.MovementCost;
+    }
 }

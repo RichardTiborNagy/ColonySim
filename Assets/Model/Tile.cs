@@ -24,13 +24,19 @@ public class Tile : IDisplayable
         get
         {
             Tile[] neighbors = new Tile[4];
-            neighbors[0] = World.Current[X + 1, Y];
-            neighbors[1] = World.Current[X, Y + 1];
-            neighbors[2] = World.Current[X - 1, Y];
-            neighbors[3] = World.Current[X, Y - 1];
+            neighbors[0] = Up;
+            neighbors[1] = Right;
+            neighbors[2] = Down;
+            neighbors[3] = Left;
             return neighbors.Where(t => t != null);
         }
     }
+
+    public Tile Up => World.Current[X, Y + 1];
+    public Tile Down => World.Current[X, Y - 1];
+    public Tile Right => World.Current[X + 1, Y];
+    public Tile Left => World.Current[X - 1, Y];
+
 
     public event Action Changed;
 

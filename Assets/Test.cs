@@ -4,28 +4,17 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-
-    public World World;
-
-    public GameObject TilePrefab;
-
     private float timer = 1f;
-
-    public GameObject Camera;
-
+    
 	// Use this for initialization
-	void Start () {
-		World = new World(100);
-	    foreach (var tile in World.Tiles)
-	    {
-	        var tileView = Instantiate(TilePrefab).GetComponent<TileView>();
-            tileView.ChangeTarget(tile);
-        }
-
-	    Camera.transform.position = new Vector3(50, 50, -10);
-
-	    var c = World[0, 0].Neighbors;
-	}
+	void Start ()
+	{
+	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 5]);
+	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 6]);
+	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[4, 5]);
+	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 5]);
+	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 6]);
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -34,10 +23,6 @@ public class Test : MonoBehaviour
 	    if (timer < 0)
 	    {
 	        timer = 1f;
-	        foreach (var tile in World.Tiles)
-	        {
-	            //tile.OnChange();
-	        }
         }
 	}
 }
