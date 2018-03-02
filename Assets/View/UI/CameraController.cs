@@ -6,6 +6,7 @@ public class CameraController : MonoBehaviour
 {
     public float PanningSpeed = 20f;
     public int PanningBorder = 10;
+    public Vector2 PanningLimits = new Vector2(100f, 100f);
 
     private void Update ()
 	{
@@ -20,6 +21,9 @@ public class CameraController : MonoBehaviour
 	    if (Input.mousePosition.y <= PanningBorder)
 	        position.y -= PanningSpeed * Time.deltaTime;
 
-	    transform.position = position;
+	    position.x = Mathf.Clamp(position.x, 0f, PanningLimits.x);
+	    position.y = Mathf.Clamp(position.y, 0f, PanningLimits.y);
+
+        transform.position = position;
 	}
 }
