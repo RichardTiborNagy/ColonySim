@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 public class Tile : IDisplayable
@@ -8,7 +10,6 @@ public class Tile : IDisplayable
     {
         X = x;
         Y = y;
-        //Type = type;
     }
 
     public Building Building { get; set; }
@@ -17,9 +18,8 @@ public class Tile : IDisplayable
 
     public int X { get; }
     public int Y { get; }
-    //public TileType Type { get; private set; }
 
-    public Tile[] Neighbors
+    public IEnumerable<Tile> Neighbors
     {
         get
         {
@@ -28,7 +28,7 @@ public class Tile : IDisplayable
             neighbors[1] = World.Current[X, Y + 1];
             neighbors[2] = World.Current[X - 1, Y];
             neighbors[3] = World.Current[X, Y - 1];
-            return neighbors;
+            return neighbors.Where(t => t != null);
         }
     }
 

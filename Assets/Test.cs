@@ -23,6 +23,8 @@ public class Test : MonoBehaviour
         }
 
 	    Camera.transform.position = new Vector3(50, 50, -10);
+
+	    var c = World[0, 0].Neighbors;
 	}
 	
 	// Update is called once per frame
