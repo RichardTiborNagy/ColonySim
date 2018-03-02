@@ -7,6 +7,13 @@ public class CameraController : MonoBehaviour
     public float PanningSpeed = 20f;
     public int PanningBorder = 10;
     public Vector2 PanningLimits = new Vector2(100f, 100f);
+    public Camera Camera;
+    public float ZoomingSpeed = 200f;
+
+    private void Start()
+    {
+        Camera = GetComponent<Camera>();
+    }
 
     private void Update ()
 	{
@@ -23,6 +30,9 @@ public class CameraController : MonoBehaviour
 
 	    position.x = Mathf.Clamp(position.x, 0f, PanningLimits.x);
 	    position.y = Mathf.Clamp(position.y, 0f, PanningLimits.y);
+
+	    Camera.orthographicSize -= Input.GetAxis("Mouse ScrollWheel") * ZoomingSpeed * Time.deltaTime;
+	    Camera.orthographicSize = Mathf.Clamp(Camera.orthographicSize, 5f, 15f);
 
         transform.position = position;
 	}

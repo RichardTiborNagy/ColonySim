@@ -221,3 +221,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PanningSpeed: 20
   PanningBorder: 10
+  PanningLimits: {x: 100, y: 100}
+  Camera: {fileID: 0}
+  ZoomingSpeed: 200
