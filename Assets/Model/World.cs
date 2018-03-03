@@ -43,13 +43,13 @@ public class World : IDisplayable
         Buildings.Add(building);
         building.Tile = tile;
         tile.Building = building;
-        if (building.Type == "Wall")
-        {
-            foreach (var tileNeighbor in tile.Neighbors.Where(x => x.Building?.Type == "Wall"))
-            {
-                tileNeighbor.Building?.OnChange();
-            }
-        }
+        //if (building.Type == "Wall")
+        //{
+        //    foreach (var tileNeighbor in tile.Neighbors.Where(x => x.Building?.Type == "Wall"))
+        //    {
+        //        tileNeighbor.Building?.OnChange();
+        //    }
+        //}
         OnChange();
     }
 

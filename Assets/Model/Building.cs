@@ -14,6 +14,8 @@ public class Building : IDisplayable
 
     public int MovementCost { get; }
 
+    public bool Conjoined { get; }
+
     public int X => Tile.X;
     public int Y => Tile.Y;
 
@@ -26,12 +28,13 @@ public class Building : IDisplayable
     /// <summary>
     /// Used to create prototypes
     /// </summary>
-    public Building(string type, int height, int width, int movementCost)
+    public Building(string type, int height, int width, int movementCost, bool conjoined)
     {
         Type = type;
         Height = height;
         Width = width;
         MovementCost = movementCost;
+        Conjoined = conjoined;
     }
 
     /// <summary>
@@ -43,5 +46,6 @@ public class Building : IDisplayable
         Height = other.Height;
         Width = other.Width;
         MovementCost = other.MovementCost;
+        Conjoined = other.Conjoined;
     }
 }

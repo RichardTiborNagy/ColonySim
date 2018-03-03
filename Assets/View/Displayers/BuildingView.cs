@@ -10,6 +10,18 @@ public class BuildingView : View<Building>
         SpriteRenderer.sortingLayerName = "Building";
     }
 
+    public new void SetTarget(Building target)
+    {
+        base.SetTarget(target);
+        if (target.Conjoined)
+        {
+            foreach (var neighbor in target.Tile.Neighbors)
+            {
+                neighbor.Building?.OnChange();
+            }
+        }
+    }
+
     protected override void Refresh()
     {
         UpdatePosition();

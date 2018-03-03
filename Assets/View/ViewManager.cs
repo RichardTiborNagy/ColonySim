@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewManager
+public static class ViewManager
 {
     private static readonly Dictionary<string, GameObject> Views;
 

@@ -19,6 +19,6 @@ public static class BuildingPrototypes
 
     private static void CreatePrototypes()
     {
-        buildings.Add("Wall", new Building("Wall", 1, 1, 100));
+        buildings.Add("Wall", new Building("Wall", 1, 1, 100, true));
     }
 }

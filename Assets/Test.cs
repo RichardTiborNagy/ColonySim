@@ -14,6 +14,7 @@ public class Test : MonoBehaviour
 	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[4, 5]);
 	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 5]);
 	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 6]);
+	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 7]);
     }
 	
 	// Update is called once per frame
