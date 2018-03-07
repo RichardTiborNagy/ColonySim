@@ -2,23 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class BuildingPrototypes
+public static class BuildingPrototypes //: PrototypeManager<Building>
 {
-    private static Dictionary<string, Building> buildings;
+    private static readonly Dictionary<string, Building> Buildings;
 
     public static Building CloneBuilding(string type)
     {
-        return new Building(buildings[type]);
+        return new Building(Buildings[type]);
     }
 
     static BuildingPrototypes()
     {
-        buildings = new Dictionary<string, Building>();
+        Buildings = new Dictionary<string, Building>();
         CreatePrototypes();
     }
 
     private static void CreatePrototypes()
     {
-        buildings.Add("Wall", new Building("Wall", 1, 1, 100, true));
+        Buildings.Add("Wall", new Building("Wall", 1, 1, 100, true));
     }
 }

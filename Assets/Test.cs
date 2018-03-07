@@ -4,26 +4,30 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    private float timer = 1f;
+    private float _timer = 1f;
     
 	// Use this for initialization
 	void Start ()
 	{
-	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 5]);
-	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 6]);
-	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[4, 5]);
-	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 5]);
-	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 6]);
-	    World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 7]);
+        World.Current.CreateRobot(RobotPrototypes.CloneRobot("Construction"), World.Current[50,50]);
+	    World.Current.CreateRobot(RobotPrototypes.CloneRobot("Construction"), World.Current[49, 51]);
+        //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 5]);
+        //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 6]);
+        //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[4, 5]);
+        //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 5]);
+        //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 6]);
+        //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 7]);
+        //World.Current.NewJob(JobPrototypes.CloneJob("BuildWall"), World.Current[20,20]);
     }
 	
 	// Update is called once per frame
 	void Update ()
 	{
-	    timer -= Time.deltaTime;
-	    if (timer < 0)
+        World.Current.Update(Time.deltaTime);
+	    _timer -= Time.deltaTime;
+	    if (_timer < 0)
 	    {
-	        timer = 1f;
+	        _timer = 1f;
         }
 	}
 }

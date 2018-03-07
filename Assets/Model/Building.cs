@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Building : IDisplayable
+public class Building : IDisplayable, IPrototypable
 {
     public int Height { get; }
     public int Width { get; }

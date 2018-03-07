@@ -10,6 +10,7 @@ public class WorldView : View<World>
 
     public Dictionary<Tile, GameObject> TileViews = new Dictionary<Tile, GameObject>();
     public Dictionary<Building, GameObject> BuildingViews = new Dictionary<Building, GameObject>();
+    public Dictionary<Robot, GameObject> RobotViews = new Dictionary<Robot, GameObject>();
     
     private new void Awake()
     {
@@ -46,6 +47,25 @@ public class WorldView : View<World>
             {
                 BuildingViews.Remove(building);
                 Destroy(BuildingViews[building]);
+            }
+        }
+
+        foreach (var robot in World.Robots)
+        {
+            if (!RobotViews.ContainsKey(robot))
+            {
+                var robotGo = Instantiate(ViewManager.GetView("Robot"));
+                robotGo.GetComponent<RobotView>().SetTarget(robot);
+                RobotViews.Add(robot, robotGo);
+            }
+        }
+
+        foreach (var robot in RobotViews.Keys)
+        {
+            if (!World.Robots.Contains(robot))
+            {
+                RobotViews.Remove(robot);
+                Destroy(RobotViews[robot]);
             }
         }
     }

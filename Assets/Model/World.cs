@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using UnityEngine.XR.WSA.Persistence;
 
 public class World : IDisplayable
 {
-    private readonly int size;
+    private readonly int _size;
 
     public World(int size)
     {
-        this.size = size;
+        this._size = size;
         Buildings = new List<Building>();
-        Tiles = new Tile[size,size];
+        Tiles = new Tile[size, size];
         for (int i = 0; i < size; i++)
         {
             for (int j = 0; j < size; j++)
@@ -20,23 +18,52 @@ public class World : IDisplayable
                 Tiles[i, j] = new Tile(i, j);
             }
         }
+
+        Jobs = new Queue<Job>();
+        Robots = new List<Robot>();
         Current = this;
         OnChange();
     }
 
     public Tile[,] Tiles { get; }
-    
+
     public Tile this[int x, int y]
     {
         get
         {
-            if (x < 0 || x >= size || y < 0 || y >= size)
+            if (x < 0 || x >= _size || y < 0 || y >= _size)
                 return null;
             return Tiles[x, y];
         }
     }
 
     public List<Building> Buildings { get; private set; }
+
+    public List<Robot> Robots { get; private set; }
+
+    public Queue<Job> Jobs { get; private set; }
+
+    public void Update(float deltaTime)
+    {
+        foreach (var robot in Robots)
+        {
+            robot.Update(deltaTime);
+        }
+    }
+
+    public void CreateRobot(Robot robot, Tile tile)
+    {
+        Robots.Add(robot);
+        robot.Tile = tile;
+        robot.Destination = tile;
+        OnChange();
+    }
+
+    public void NewJob(Job job, Tile tile)
+    {
+        job.Tile = tile;
+        Jobs.Enqueue(job);
+    }
 
     public void Build(Building building, Tile tile)
     {
