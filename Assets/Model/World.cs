@@ -58,16 +58,6 @@ public class World : IDisplayable
 
     public void Update(float deltaTime)
     {
-        //foreach (var robot in Robots)
-        //{
-        //    robot.Update(deltaTime);
-        //}
-
-        //foreach (var building in Buildings)
-        //{
-        //    building.Update(deltaTime);
-        //}
-
         Robots.ForEach(robot => robot.Update(deltaTime));
 
         Buildings.ForEach(building => building.Update(deltaTime));
@@ -92,6 +82,7 @@ public class World : IDisplayable
             return;
         var jobToCreate = new Job(protoJob) {Tile = tile};
         AvailableJobs.Add(jobToCreate);
+        OnChange();
     }
 
     public void CreateBuilding(Building protoBuilding, Tile tile)
