@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-public class Job : IPrototypable
+public class Job : IPrototypable, IDisplayable
 {
     public string Type { get; private set; }
 
@@ -11,18 +11,22 @@ public class Job : IPrototypable
 
     public float TimeToComplete { get; private set; }
 
-    public float Progress { get; set; }
+    public float AmountDone { get; set; }
 
     public void Work(float deltaTime)
     {
-        Progress += deltaTime;
+        AmountDone += deltaTime;
         if (IsComplete)
         {
             OnComplete?.Invoke(this);
         }
+
+        OnChange();
     }
 
-    public bool IsComplete => Progress >= TimeToComplete;
+    public float Progress => AmountDone / TimeToComplete;
+
+    public bool IsComplete => AmountDone >= TimeToComplete;
 
     private Action<Job> OnComplete { get; set; }
 
@@ -35,7 +39,7 @@ public class Job : IPrototypable
         TimeToComplete = timeToComplete;
         RobotType = robotType;
         CanCreate = canCreate;
-        Progress = 0f;
+        AmountDone = 0f;
     }
 
     public Job(Job other)
@@ -45,5 +49,14 @@ public class Job : IPrototypable
         TimeToComplete = other.TimeToComplete;
         Type = other.Type;
         OnComplete = other.OnComplete;
+    }
+
+    public int X => Tile.X;
+    public int Y => Tile.Y;
+
+    public event Action Changed;
+    public void OnChange()
+    {
+        Changed?.Invoke();
     }
 }
