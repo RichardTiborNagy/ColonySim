@@ -31,7 +31,10 @@ public static class Prototypes
     private static void CreateJobPrototypes()
     {
         Jobs.Add(new Job("BuildWall",
-            (job) => World.Current.Build(new Building(Buildings.Get("Wall")), job.Tile), 2));
+            (job) => World.Current.CreateBuilding(new Building(Buildings.Get("Wall")), job.Tile),
+            2,
+            "Construction",
+            (tile) => tile.Empty));
     }
 
     private static void CreateRobotPrototypes()
