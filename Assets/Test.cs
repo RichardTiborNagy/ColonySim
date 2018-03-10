@@ -4,21 +4,27 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    private float _timer = 1f;
+    //private float _timer = 1f;
     
 	// Use this for initialization
 	void Start ()
 	{
         World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[50,50]);
         World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[51,49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[51,49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[51,49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[51,49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[51,49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[51,49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[51,49]);
 	    
-        //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 5]);
-        //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 6]);
-        //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[4, 5]);
-        //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 5]);
-        //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 6]);
-        //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 7]);
-        //World.Current.NewJob(JobPrototypes.CloneJob("BuildWall"), World.Current[20,20]);
+        //World.Current.CreateBuilding(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 5]);
+        //World.Current.CreateBuilding(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 6]);
+        //World.Current.CreateBuilding(BuildingPrototypes.CloneBuilding("Wall"), World.Current[4, 5]);
+        //World.Current.CreateBuilding(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 5]);
+        //World.Current.CreateBuilding(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 6]);
+        //World.Current.CreateBuilding(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 7]);
+        //World.Current.CreateJob(JobPrototypes.CloneJob("BuildWall"), World.Current[20,20]);
 
 	    //foreach (var tile in World.Current[0,0].TilesInRange(1))
 	    //{
