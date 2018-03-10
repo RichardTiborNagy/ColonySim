@@ -20,6 +20,12 @@ public class Tile : IDisplayable
     public int X { get; }
     public int Y { get; }
 
+    public bool Empty => Building == null && Resource == null && World.Current.Jobs.All(j => j.Tile != this);
+
+    public bool HasBuildingWithType(string type) => Building != null && Building.Type == type;
+
+    public bool HasResourceWithType(string type) => Resource != null && Resource.Type == type;
+
     public IEnumerable<Tile> Neighbors
     {
         get
@@ -57,6 +63,10 @@ public class Tile : IDisplayable
     {
         return Building == null;
     }
+
+    private const int BaseMovementCost = 10;
+
+    public int MovementCost => BaseMovementCost + (Building?.MovementCost ?? 0);
 
     public event Action Changed;
 
