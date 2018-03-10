@@ -30,11 +30,7 @@ public class Tile : IDisplayable
     {
         get
         {
-            Tile[] neighbors = new Tile[4];
-            neighbors[0] = Up;
-            neighbors[1] = Right;
-            neighbors[2] = Down;
-            neighbors[3] = Left;
+            var neighbors = new List<Tile>(4) {Up, Right, Down, Left};
             return neighbors.Where(t => t != null);
         }
     }
