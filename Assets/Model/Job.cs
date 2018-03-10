@@ -26,17 +26,21 @@ public class Job : IPrototypable
 
     private Action<Job> OnComplete { get; set; }
 
-    public Job(string type, Action<Job> onComplete, float timeToComplete, string robotType)
+    public readonly Func<Tile, bool> CanCreate;
+
+    public Job(string type, Action<Job> onComplete, float timeToComplete, string robotType, Func<Tile, bool> canCreate)
     {
         Type = type;
         OnComplete = onComplete;
         TimeToComplete = timeToComplete;
         RobotType = robotType;
+        CanCreate = canCreate;
         Progress = 0f;
     }
 
     public Job(Job other)
     {
+        CanCreate = other.CanCreate;
         RobotType = other.RobotType;
         TimeToComplete = other.TimeToComplete;
         Type = other.Type;
