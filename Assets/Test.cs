@@ -18,6 +18,12 @@ public class Test : MonoBehaviour
         //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 6]);
         //World.Current.Build(BuildingPrototypes.CloneBuilding("Wall"), World.Current[6, 7]);
         //World.Current.NewJob(JobPrototypes.CloneJob("BuildWall"), World.Current[20,20]);
+
+	    foreach (var tile in World.Current[0,0].TilesInRange(1))
+	    {
+	        Debug.Log(tile.X + " " + tile.Y);
+	    }
+
     }
 	
 	// Update is called once per frame

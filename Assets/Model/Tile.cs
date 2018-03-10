@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -37,6 +38,20 @@ public class Tile : IDisplayable
     public Tile Right => World.Current[X + 1, Y];
     public Tile Left => World.Current[X - 1, Y];
 
+    public IEnumerable<Tile> TilesInRange(int range)
+    {
+        List<Tile> inRange = new List<Tile>();
+
+        for (int i = -range; i <= range; i++)
+        {
+            for (int j = -range; j <= range; j++)
+            {
+                inRange.Add(World.Current[X+i, Y+j]);
+            }
+        }
+
+        return inRange.Where(t => t != null);
+    }
 
     public event Action Changed;
 
