@@ -49,6 +49,11 @@ public class World : IDisplayable
         {
             robot.Update(deltaTime);
         }
+
+        foreach (var building in Buildings)
+        {
+            building.Update(deltaTime);
+        }
     }
 
     public void CreateRobot(Robot protoRobot, Tile tile)
