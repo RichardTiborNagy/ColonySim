@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 
 public class World : IDisplayable
 {
@@ -19,7 +21,8 @@ public class World : IDisplayable
             }
         }
 
-        Jobs = new Queue<Job>();
+        AvailableJobs = new List<Job>();
+        TakenJobs = new List<Job>();
         Robots = new List<Robot>();
         Current = this;
         OnChange();
@@ -41,46 +44,66 @@ public class World : IDisplayable
 
     public List<Robot> Robots { get; private set; }
 
-    public Queue<Job> Jobs { get; private set; }
+    public List<Job> AvailableJobs { get; private set; }
+
+    public List<Job> TakenJobs { get; private set; }
+
+    public void TakeJob(Job job)
+    {
+        AvailableJobs.Remove(job);
+        TakenJobs.Add(job);
+    }
+
+    public IEnumerable<Job> Jobs => AvailableJobs.Concat(TakenJobs);
 
     public void Update(float deltaTime)
     {
-        foreach (var robot in Robots)
-        {
-            robot.Update(deltaTime);
-        }
+        //foreach (var robot in Robots)
+        //{
+        //    robot.Update(deltaTime);
+        //}
 
-        foreach (var building in Buildings)
-        {
-            building.Update(deltaTime);
-        }
+        //foreach (var building in Buildings)
+        //{
+        //    building.Update(deltaTime);
+        //}
+
+        Robots.ForEach(robot => robot.Update(deltaTime));
+
+        Buildings.ForEach(building => building.Update(deltaTime));
+
+        if (TakenJobs.RemoveAll(job => job.IsComplete) > 0)
+            OnChange();
     }
+
 
     public void CreateRobot(Robot protoRobot, Tile tile)
     {
-        Robot robotToCreate = new Robot(protoRobot);
+        var robotToCreate = new Robot(protoRobot);
         Robots.Add(robotToCreate);
         robotToCreate.Tile = tile;
         robotToCreate.Destination = tile;
         OnChange();
     }
 
-    public void NewJob(Job protoJob, Tile tile)
+    public void CreateJob(Job protoJob, Tile tile)
     {
-        Job jobToCreate = new Job(protoJob);
-        jobToCreate.Tile = tile;
-        Jobs.Enqueue(jobToCreate);
+        if (!protoJob.CanCreate(tile))
+            return;
+        var jobToCreate = new Job(protoJob) {Tile = tile};
+        AvailableJobs.Add(jobToCreate);
     }
 
-    public void Build(Building protoBuilding, Tile tile)
+    public void CreateBuilding(Building protoBuilding, Tile tile)
     {
         if (!tile.CanBuildHere())
         {
             return;
         }
-        Building buildingToCreate = new Building(protoBuilding);
+
+        var buildingToCreate = new Building(protoBuilding) {Tile = tile};
+
         Buildings.Add(buildingToCreate);
-        buildingToCreate.Tile = tile;
         tile.Building = buildingToCreate;
         OnChange();
     }
@@ -88,6 +111,7 @@ public class World : IDisplayable
     public static World Current { get; private set; }
 
     public int X => 0;
+
     public int Y => 0;
 
     public event Action Changed;
