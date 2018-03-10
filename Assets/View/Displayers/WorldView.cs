@@ -11,12 +11,20 @@ public class WorldView : View<World>
     public Dictionary<Tile, GameObject> TileViews = new Dictionary<Tile, GameObject>();
     public Dictionary<Building, GameObject> BuildingViews = new Dictionary<Building, GameObject>();
     public Dictionary<Robot, GameObject> RobotViews = new Dictionary<Robot, GameObject>();
+    public Dictionary<Job, GameObject> JobViews = new Dictionary<Job, GameObject>();
+
     
     private new void Awake()
     {
         World = new World(100);
         SetTarget(World);
         Refresh();
+    }
+
+    public void Update()
+    {
+        World.Update(Time.deltaTime);
+        Debug.Log(JobViews.Count);
     }
 
     protected override void Refresh()
@@ -60,13 +68,29 @@ public class WorldView : View<World>
             }
         }
 
-        foreach (var robot in RobotViews.Keys)
+        // todo update iterations up from here
+        var robotsToDestroy = RobotViews.Keys.Where(r => !World.Robots.Contains(r)).ToList();
+        foreach (var robot in robotsToDestroy)
         {
-            if (!World.Robots.Contains(robot))
-            {
-                RobotViews.Remove(robot);
-                Destroy(RobotViews[robot]);
-            }
+            Destroy(RobotViews[robot]);
+            RobotViews.Remove(robot);
         }
+
+        var newJobsToDisplay = World.Jobs.Where(j => !JobViews.ContainsKey(j)).ToList();
+        foreach (var job in newJobsToDisplay)
+        {
+            var jobGo = Instantiate(ViewManager.GetView("Job"));
+            jobGo.GetComponent<JobView>().SetTarget(job);
+            JobViews.Add(job, jobGo);
+        }
+
+        var jobsToDestroy = JobViews.Keys.Where(j => !World.Jobs.Contains(j)).ToList();
+        foreach (var job in jobsToDestroy)
+        {
+            var jobGo = JobViews[job];
+            Destroy(jobGo);
+            JobViews.Remove(job);
+        }
+
     }
 }
