@@ -14,6 +14,10 @@ public class Job : IPrototypable
     public void Work(float deltaTime)
     {
         Progress += deltaTime;
+        if (IsComplete)
+        {
+            OnComplete?.Invoke(this);
+        }
     }
 
     public bool IsComplete => Progress >= TimeToComplete;
@@ -33,10 +37,5 @@ public class Job : IPrototypable
         TimeToComplete = other.TimeToComplete;
         Type = other.Type;
         OnComplete = other.OnComplete;
-    }
-
-    public void Complete()
-    {
-        OnComplete?.Invoke(this);
     }
 }
