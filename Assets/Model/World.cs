@@ -51,32 +51,32 @@ public class World : IDisplayable
         }
     }
 
-    public void CreateRobot(Robot robot, Tile tile)
+    public void CreateRobot(Robot protoRobot, Tile tile)
     {
-        Robots.Add(robot);
-        robot.Tile = tile;
-        robot.Destination = tile;
+        Robot robotToCreate = new Robot(protoRobot);
+        Robots.Add(robotToCreate);
+        robotToCreate.Tile = tile;
+        robotToCreate.Destination = tile;
         OnChange();
     }
 
-    public void NewJob(Job job, Tile tile)
+    public void NewJob(Job protoJob, Tile tile)
     {
-        job.Tile = tile;
-        Jobs.Enqueue(job);
+        Job jobToCreate = new Job(protoJob);
+        jobToCreate.Tile = tile;
+        Jobs.Enqueue(jobToCreate);
     }
 
-    public void Build(Building building, Tile tile)
+    public void Build(Building protoBuilding, Tile tile)
     {
-        Buildings.Add(building);
-        building.Tile = tile;
-        tile.Building = building;
-        //if (building.Type == "Wall")
-        //{
-        //    foreach (var tileNeighbor in tile.Neighbors.Where(x => x.Building?.Type == "Wall"))
-        //    {
-        //        tileNeighbor.Building?.OnChange();
-        //    }
-        //}
+        if (!tile.CanBuildHere())
+        {
+            return;
+        }
+        Building buildingToCreate = new Building(protoBuilding);
+        Buildings.Add(buildingToCreate);
+        buildingToCreate.Tile = tile;
+        tile.Building = buildingToCreate;
         OnChange();
     }
 

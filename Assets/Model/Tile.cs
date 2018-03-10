@@ -53,6 +53,11 @@ public class Tile : IDisplayable
         return inRange.Where(t => t != null);
     }
 
+    public bool CanBuildHere()
+    {
+        return Building == null;
+    }
+
     public event Action Changed;
 
     public void OnChange()

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 
-public class Job
+public class Job : IPrototypable
 {
     public string Type { get; private set; }
 
     public Tile Tile { get; set; }
+
+    public float Progress { get; set; }
 
     private Action<Job> OnComplete { get; set; }
 
@@ -13,6 +15,7 @@ public class Job
     {
         Type = type;
         OnComplete = onComplete;
+        Progress = 0f;
     }
 
     public Job(Job other)

@@ -11,7 +11,7 @@ public class MouseController : MonoBehaviour
             Debug.Log(pos);
 	        int x = Mathf.RoundToInt(pos.x);
 	        int y = Mathf.RoundToInt(pos.y);
-	        World.Current.NewJob(JobPrototypes.CloneJob("BuildWall"), World.Current[x, y]);
+	        World.Current.NewJob(Prototypes.Jobs.Get("BuildWall"), World.Current[x, y]);
 	    }
     }
 }

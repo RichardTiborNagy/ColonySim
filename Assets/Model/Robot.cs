@@ -79,7 +79,12 @@ public class Robot : IDisplayable, IPrototypable
         Type = other.Type;
         Speed = other.Speed;
     }
-    
+
+    public Robot Clone(Robot other)
+    {
+        return new Robot(this);
+    }
+
     #region IDisplayable interface implementation
     public int X => Tile.X;
     public int Y => Tile.Y;
