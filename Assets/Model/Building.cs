@@ -19,6 +19,13 @@ public class Building : IDisplayable, IPrototypable
     public int X => Tile.X;
     public int Y => Tile.Y;
 
+    private readonly Action<Building, float> OnUpdate;
+
+    public void Update(float deltaTime)
+    {
+        OnUpdate?.Invoke(this, deltaTime);
+    }
+
     public event Action Changed;
     public void OnChange()
     {
@@ -28,13 +35,14 @@ public class Building : IDisplayable, IPrototypable
     /// <summary>
     /// Used to create prototypes
     /// </summary>
-    public Building(string type, int height, int width, int movementCost, bool conjoined)
+    public Building(string type, int height, int width, int movementCost, bool conjoined, Action<Building, float> onUpdate)
     {
         Type = type;
         Height = height;
         Width = width;
         MovementCost = movementCost;
         Conjoined = conjoined;
+        OnUpdate = onUpdate;
     }
 
     /// <summary>
@@ -42,6 +50,7 @@ public class Building : IDisplayable, IPrototypable
     /// </summary>
     public Building(Building other)
     {
+        OnUpdate = other.OnUpdate;
         Type = other.Type;
         Height = other.Height;
         Width = other.Width;
