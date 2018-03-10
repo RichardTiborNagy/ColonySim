@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -25,16 +26,16 @@ public class Robot : IDisplayable, IPrototypable
 
     private void GetJob()
     {
-        if (World.Current.Jobs.Count > 0)
-        {
-            Job = World.Current.Jobs.Dequeue();
-            Destination = Job.Tile;
-            //Debug.Log("Got a job");
-        }
-        else
-        {
-            //Debug.Log("No available jobs");
-        }
+        var job = World.Current.AvailableJobs.FirstOrDefault(j => j.RobotType == this.Type);
+        if (job == null)
+            return;
+
+        World.Current.TakeJob(job);
+
+        Job = job;
+
+        //hack
+        Destination = job.Tile;
     }
 
     public void Update(float deltaTime)
@@ -49,9 +50,12 @@ public class Robot : IDisplayable, IPrototypable
         if (Tile == Destination)
         {
             //Debug.Log("Reached destination, completing job");
-            Job.Complete();
-            Job = null;
-            MovementProgress = 0;
+            Job.Work(deltaTime);
+            if(Job.IsComplete)
+            {
+                Job = null;
+                MovementProgress = 0;
+            }
             return;
         }
 
