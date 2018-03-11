@@ -25,6 +25,9 @@ public class World : IDisplayable
         TakenJobs = new List<Job>();
         Robots = new List<Robot>();
         Current = this;
+
+        Graph = new Graph(this);
+
         OnChange();
     }
 
@@ -39,6 +42,8 @@ public class World : IDisplayable
             return Tiles[x, y];
         }
     }
+
+    public Graph Graph { get; private set; }
 
     public List<Building> Buildings { get; private set; }
 
@@ -87,7 +92,19 @@ public class World : IDisplayable
 
     public void CreateBuilding(Building protoBuilding, Tile tile)
     {
-        if (!tile.CanBuildHere())
+        var tilesToOccupy = new List<Tile>();
+
+        for (int i = 0; i < protoBuilding.Size; i++)
+        {
+            for (int j = 0; j < protoBuilding.Size; j++)
+            {
+                var tileToOccupy = Tiles[tile.X + i, tile.Y + j];
+                if (tileToOccupy == null) return;
+                tilesToOccupy.Add(tileToOccupy);
+            }
+        }
+
+        if (tilesToOccupy.Any(t => !t.CanBuildHere()))
         {
             return;
         }
@@ -95,7 +112,10 @@ public class World : IDisplayable
         var buildingToCreate = new Building(protoBuilding) {Tile = tile};
 
         Buildings.Add(buildingToCreate);
-        tile.Building = buildingToCreate;
+        tilesToOccupy.ForEach(t => t.Building = buildingToCreate);
+
+        tilesToOccupy.ForEach(t => Graph.RecreateEdges(t));
+
         OnChange();
     }
 

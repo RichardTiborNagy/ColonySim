@@ -5,14 +5,13 @@ using UnityEngine;
 
 public class Building : IDisplayable, IPrototypable
 {
-    public int Height { get; }
-    public int Width { get; }
+    public int Size { get; }
 
     public string Type { get; }
 
     public Tile Tile { get; set; }
 
-    public int MovementCost { get; }
+    public float MovementModifier { get; }
 
     public bool Conjoined { get; }
 
@@ -35,12 +34,11 @@ public class Building : IDisplayable, IPrototypable
     /// <summary>
     /// Used to create prototypes
     /// </summary>
-    public Building(string type, int height, int width, int movementCost, bool conjoined, Action<Building, float> onUpdate)
+    public Building(string type, int size, int movementModifier, bool conjoined, Action<Building, float> onUpdate)
     {
         Type = type;
-        Height = height;
-        Width = width;
-        MovementCost = movementCost;
+        Size = size;
+        MovementModifier = movementModifier;
         Conjoined = conjoined;
         OnUpdate = onUpdate;
     }
@@ -52,9 +50,8 @@ public class Building : IDisplayable, IPrototypable
     {
         OnUpdate = other.OnUpdate;
         Type = other.Type;
-        Height = other.Height;
-        Width = other.Width;
-        MovementCost = other.MovementCost;
+        Size = other.Size;
+        MovementModifier = other.MovementModifier;
         Conjoined = other.Conjoined;
     }
 }

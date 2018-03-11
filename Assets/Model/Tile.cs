@@ -60,9 +60,11 @@ public class Tile : IDisplayable
         return Building == null;
     }
 
-    private const int BaseMovementCost = 10;
+    private const float BaseMovementCost = 10f;
 
-    public int MovementCost => BaseMovementCost + (Building?.MovementCost ?? 0);
+    public float MovementCost => BaseMovementCost * (Building?.MovementModifier ?? 1);
+
+    public bool Enterable => MovementCost > 0;
 
     public event Action Changed;
 
