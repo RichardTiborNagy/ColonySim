@@ -27,11 +27,8 @@ public class JobView : View<Job>
         {
         }
 
+        if (!(Target.Progress > 0)) return;
         int progress = Mathf.Clamp(Mathf.RoundToInt(Target.Progress * numberOfProgressSprites), 0, numberOfProgressSprites-1);
-
-        //Debug.Log(Target.Progress);
-        //Debug.Log(progress);
-
         ProgressSpriteRenderer.sprite = SpriteManager.GetSprite("Progress_Green_" + progress);
     }
 }

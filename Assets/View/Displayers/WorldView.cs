@@ -16,7 +16,7 @@ public class WorldView : View<World>
     
     private new void Awake()
     {
-        World = new World(100);
+        World = new World(50);
         SetTarget(World);
         Refresh();
     }
@@ -24,7 +24,7 @@ public class WorldView : View<World>
     public void Update()
     {
         World.Update(Time.deltaTime);
-        Debug.Log(JobViews.Count);
+        //Debug.Log(JobViews.Count);
     }
 
     protected override void Refresh()
