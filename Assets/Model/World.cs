@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 
 public class World : IDisplayable
 {
@@ -57,6 +55,12 @@ public class World : IDisplayable
     {
         AvailableJobs.Remove(job);
         TakenJobs.Add(job);
+    }
+    
+    public void GiveUpJob(Job jobToGiveUp)
+    {
+        TakenJobs.Remove(jobToGiveUp);
+        AvailableJobs.Add(jobToGiveUp);
     }
 
     public IEnumerable<Job> Jobs => AvailableJobs.Concat(TakenJobs);

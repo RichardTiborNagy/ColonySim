@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 
 public class Tile : IDisplayable
 {
@@ -16,7 +13,7 @@ public class Tile : IDisplayable
     public Building Building { get; set; }
 
     public Resource Resource { get; set; }
-
+    
     public int X { get; }
     public int Y { get; }
 
@@ -25,7 +22,7 @@ public class Tile : IDisplayable
     public bool HasBuildingWithType(string type) => Building != null && Building.Type == type;
 
     public bool HasResourceWithType(string type) => Resource != null && Resource.Type == type;
-
+    
     public IEnumerable<Tile> Neighbors
     {
         get

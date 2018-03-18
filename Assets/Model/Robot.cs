@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -24,6 +23,8 @@ public class Robot : IDisplayable, IPrototypable
 
     public State State { get; private set; }
 
+    private Queue<Tile> Path;
+
     private void GetJob()
     {
         var job = World.Current.AvailableJobs.FirstOrDefault(j => j.RobotType == this.Type);
@@ -38,8 +39,25 @@ public class Robot : IDisplayable, IPrototypable
         Destination = job.Tile;
     }
 
+    private void GiveUpJob()
+    {
+        World.Current.GiveUpJob(Job);
+        Job = null;
+    }
+
+    private bool HasJob => Job != null;
+
+    private bool FindPathToTile(Tile destination)
+    {
+        throw new NotImplementedException();
+    }
+
     public void Update(float deltaTime)
     {
+
+
+
+
         if (Job == null)
         {
             //Debug.Log("Looking for a job");
