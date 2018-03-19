@@ -10,18 +10,20 @@ public class Robot : IDisplayable, IPrototypable
 
     public Tile Tile { get; set; }
 
-    public Tile Destination { get; set; }
+    public Tile NexTile { get; set; }
+
+    //public Tile Destination { get; set; }
 
     public float MovementProgress { get; private set; }
 
     //temporary
-    public float Distance => Mathf.Sqrt(Mathf.Pow(Tile.X - Destination.X, 2) + Mathf.Pow(Tile.Y - Destination.Y, 2));
+    //public float Distance => Mathf.Sqrt(Mathf.Pow(Tile.X - Destination.X, 2) + Mathf.Pow(Tile.Y - Destination.Y, 2));
 
     public int Speed { get; private set; }
 
     public Job Job { get; private set; }
 
-    public State State { get; private set; }
+    //public State State { get; private set; }
 
     private Queue<Tile> Path;
 
@@ -36,7 +38,7 @@ public class Robot : IDisplayable, IPrototypable
         Job = job;
 
         //hack
-        Destination = job.Tile;
+        //Destination = job.Tile;
     }
 
     private void GiveUpJob()
@@ -49,44 +51,61 @@ public class Robot : IDisplayable, IPrototypable
 
     private bool FindPathToTile(Tile destination)
     {
-        throw new NotImplementedException();
+        Path = Pathfinder.FindPath(Tile, destination);
+        return Path != null;
     }
 
-    public void Update(float deltaTime)
+    private void UpdateMovement(float deltaTime)
     {
-
-
-
-
-        if (Job == null)
+        if (Path == null)
         {
-            //Debug.Log("Looking for a job");
-            GetJob();
             return;
         }
 
-        if (Tile == Destination)
+        if (MovementProgress > 1)
         {
-            //Debug.Log("Reached destination, completing job");
+            if (Path.Count <= 0)
+            {
+                Path = null;
+                Tile = NexTile;
+                MovementProgress = 0;
+                return;
+            }
+            Tile = NexTile;
+            NexTile = Path.Dequeue();
+            MovementProgress = 0;
+        }
+
+        MovementProgress += (Speed / NexTile.MovementCost) * deltaTime;
+    }
+
+    private void UpdateWork(float deltaTime)
+    {
+        if (Job == null)
+        {
+            GetJob();
+            if (Job == null) return;
+            if (!FindPathToTile(Job.Tile))
+            {
+                GiveUpJob();
+            }
+        }
+        else if (Path == null) //reached destination
+        {
             Job.Work(deltaTime);
-            if(Job.IsComplete)
+            if (Job.IsComplete)
             {
                 Job = null;
                 MovementProgress = 0;
             }
-            return;
         }
+    }
 
-        //temporary move
-        if (MovementProgress > 1)
-        {
-            Tile = Destination;
-            return;
-        }
-
-        MovementProgress += (Speed / Distance) * deltaTime;
+    public void Update(float deltaTime)
+    {
+        UpdateMovement(deltaTime);
+        UpdateWork(deltaTime);
         OnChange();
-
     }
 
     public Robot(string type, int speed)

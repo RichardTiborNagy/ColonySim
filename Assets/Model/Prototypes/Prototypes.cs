@@ -39,6 +39,6 @@ public static class Prototypes
 
     private static void CreateRobotPrototypes()
     {
-        Robots.Add(new Robot("Construction", 5));
+        Robots.Add(new Robot("Construction", 20));
     }
 }

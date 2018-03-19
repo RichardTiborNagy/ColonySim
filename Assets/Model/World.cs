@@ -80,8 +80,7 @@ public class World : IDisplayable
     {
         var robotToCreate = new Robot(protoRobot);
         Robots.Add(robotToCreate);
-        robotToCreate.Tile = tile;
-        robotToCreate.Destination = tile;
+        robotToCreate.Tile = robotToCreate.NexTile = tile;
         OnChange();
     }
 

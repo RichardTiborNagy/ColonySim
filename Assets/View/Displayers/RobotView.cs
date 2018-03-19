@@ -20,6 +20,6 @@ public class RobotView : View<Robot>
     protected override void UpdatePosition()
     {
         gameObject.transform.position = Vector3.Lerp(new Vector3(Target.Tile.X, Target.Tile.Y, 0),
-            new Vector3(Target.Destination.X, Target.Destination.Y, 0), Target.MovementProgress);
+            new Vector3(Target.NexTile.X, Target.NexTile.Y, 0), Target.MovementProgress);
     }
 }
