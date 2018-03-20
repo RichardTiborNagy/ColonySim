@@ -25,7 +25,7 @@ public static class Prototypes
 
     private static void CreateBuildingPrototypes()
     {
-        Buildings.Add(new Building("Wall", 1, 0, true, null));
+        Buildings.Add(new Building("Wall", 1, 10f, true, null));
     }
 
     private static void CreateJobPrototypes()

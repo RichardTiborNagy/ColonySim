@@ -8,14 +8,14 @@ public class Test : MonoBehaviour
     void Start ()
     {
         World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45,49]);
-        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45,49]);
-        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45,49]);
-        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45,49]);
-        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45,49]);
-        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45,49]);
-        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45,49]);
-        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45,49]);
-        
+        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
+
         //World.Current.CreateBuilding(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 5]);
         //World.Current.CreateBuilding(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 6]);
         //World.Current.CreateBuilding(BuildingPrototypes.CloneBuilding("Wall"), World.Current[4, 5]);
@@ -30,7 +30,7 @@ public class Test : MonoBehaviour
         //}
 
     }
-    
+
     // Update is called once per frame
     void Update ()
     {

@@ -34,7 +34,7 @@ public class Building : IDisplayable, IPrototypable
     /// <summary>
     /// Used to create prototypes
     /// </summary>
-    public Building(string type, int size, int movementModifier, bool conjoined, Action<Building, float> onUpdate)
+    public Building(string type, int size, float movementModifier, bool conjoined, Action<Building, float> onUpdate)
     {
         Type = type;
         Size = size;

@@ -13,6 +13,8 @@ public class Job : IPrototypable, IDisplayable
 
     public float AmountDone { get; set; }
 
+    public float Timeout { get; set; }
+
     public void Work(float deltaTime)
     {
         AmountDone += deltaTime;
@@ -40,6 +42,7 @@ public class Job : IPrototypable, IDisplayable
         RobotType = robotType;
         CanCreate = canCreate;
         AmountDone = 0f;
+        Timeout = 0f;
     }
 
     public Job(Job other)

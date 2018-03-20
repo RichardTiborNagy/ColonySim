@@ -71,7 +71,9 @@ public class World : IDisplayable
 
         Buildings.ForEach(building => building.Update(deltaTime));
 
-        if (TakenJobs.RemoveAll(job => job.IsComplete) > 0)
+        //AvailableJobs.ForEach(job => job.Timeout += deltaTime);
+
+        if (TakenJobs.RemoveAll(job => job.IsComplete) /*+ AvailableJobs.RemoveAll(job => job.Timeout > 5)*/ > 0)
             OnChange();
     }
 
@@ -80,7 +82,7 @@ public class World : IDisplayable
     {
         var robotToCreate = new Robot(protoRobot);
         Robots.Add(robotToCreate);
-        robotToCreate.Tile = robotToCreate.NexTile = tile;
+        robotToCreate.Tile = robotToCreate.Destination = robotToCreate.NextTile = tile;
         OnChange();
     }
 

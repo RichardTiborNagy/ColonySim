@@ -30,7 +30,7 @@ public static class Pathfinder
         {
             Node current = openSet.Dequeue();
             
-            if (destinationTile.Neighbors.Contains(current.Tile))
+            if (destinationTile.IsNeighbor(current.Tile))
             {
                 return Reconstruct(cameFrom, current);
             }

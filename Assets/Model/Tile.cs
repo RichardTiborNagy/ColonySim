@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class Tile : IDisplayable
 {
@@ -30,6 +31,11 @@ public class Tile : IDisplayable
             var neighbors = new List<Tile>(4) {Up, Right, Down, Left};
             return neighbors.Where(t => t != null);
         }
+    }
+
+    public bool IsNeighbor(Tile other)
+    {
+        return Mathf.Abs(X - other.X) + Mathf.Abs(Y - other.Y) <= 1;
     }
 
     public Tile Up => World.Current[X, Y + 1];
