@@ -50,6 +50,9 @@ TagManager:
   - name: Building
     uniqueID: 2781233269
     locked: 0
+  - name: Job
+    uniqueID: 2257623815
+    locked: 0
   - name: Entity
     uniqueID: 3177833203
     locked: 0

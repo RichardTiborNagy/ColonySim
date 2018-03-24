@@ -11,10 +11,10 @@ public class Test : MonoBehaviour
         World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
         World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
         World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
-        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
-        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
-        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
-        World.Current.CreateRobot(Prototypes.Robots.Get("Construction"), World.Current[45, 49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Gatherer"), World.Current[45, 49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Gatherer"), World.Current[45, 49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Gatherer"), World.Current[45, 49]);
+        World.Current.CreateRobot(Prototypes.Robots.Get("Gatherer"), World.Current[45, 49]);
 
         //World.Current.CreateBuilding(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 5]);
         //World.Current.CreateBuilding(BuildingPrototypes.CloneBuilding("Wall"), World.Current[5, 6]);

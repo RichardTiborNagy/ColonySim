@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Linq;
 
 public static class Prototypes
 {
@@ -25,20 +23,35 @@ public static class Prototypes
 
     private static void CreateBuildingPrototypes()
     {
-        Buildings.Add(new Building("Wall", 1, 10f, true, null));
+        Buildings.Add(new Building("Wall", 1, 0f, true, null));
+        Buildings.Add(new Building("Tree", 1, 2f, false, null));
     }
 
     private static void CreateJobPrototypes()
     {
         Jobs.Add(new Job("BuildWall",
-            (job) => World.Current.CreateBuilding(new Building(Prototypes.Buildings.Get("Wall")), job.Tile),
+            job => World.Current.CreateBuilding(new Building(Buildings.Get("Wall")), job.Tile),
             2,
             "Construction",
-            (tile) => tile.Empty));
+            tile => tile.Empty));
+
+        Jobs.Add(new Job("Demolish",
+            job => World.Current.DemolishBuilding(job.Tile),
+            5,
+            "Construction",
+            tile => tile.HasBuilding));
+
+        Jobs.Add(new Job("Gather",
+            job => World.Current.DemolishBuilding(job.Tile),
+            4,
+            "Gatherer",
+            tile => tile.HasBuildingWithType("Tree")
+            ));
     }
 
     private static void CreateRobotPrototypes()
     {
         Robots.Add(new Robot("Construction", 20));
+        Robots.Add(new Robot("Gatherer", 30));
     }
 }

@@ -13,13 +13,6 @@ public class BuildingView : View<Building>
     public new void SetTarget(Building target)
     {
         base.SetTarget(target);
-        if (target.Conjoined)
-        {
-            foreach (var neighbor in target.Tile.Neighbors)
-            {
-                neighbor.Building?.OnChange();
-            }
-        }
     }
 
     protected override void Refresh()
@@ -45,6 +38,10 @@ public class BuildingView : View<Building>
         else if (Target.Type == "Road")
         {
             SpriteRenderer.sprite = SpriteManager.GetRandomRoadSprite();
+        }
+        else if (Target.Type == "Tree")
+        {
+            SpriteRenderer.sprite = SpriteManager.GetRandomTreeSprite();
         }
         else
         {

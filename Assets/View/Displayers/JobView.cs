@@ -13,19 +13,29 @@ public class JobView : View<Job>
     private new void Awake()
     {
         base.Awake();
-        SpriteRenderer.sortingLayerName = "Building";
+        SpriteRenderer.sortingLayerName = "Job";
         ProgressSpriteRenderer = ProgressBar.GetComponent<SpriteRenderer>();
     }
 
     protected override void Refresh()
     {
+        Sprite sprite;
         UpdatePosition();
-
-        SpriteRenderer.sprite = SpriteManager.GetSprite("Blueprint");
-
-        if (Target.Type.StartsWith("Build"))
+        switch (Target.Type)
         {
+            case "Demolish":
+                sprite = SpriteManager.GetSprite("Demolish");
+                break;
+            case "Gather":
+                sprite = SpriteManager.GetSprite("Gather");
+                break;
+            default:
+                sprite = SpriteManager.GetSprite("Blueprint");
+                break;
         }
+
+        SpriteRenderer.sprite = sprite;
+        
 
         if (!(Target.Progress > 0)) return;
         int progress = Mathf.Clamp(Mathf.RoundToInt(Target.Progress * numberOfProgressSprites), 0, numberOfProgressSprites-1);

@@ -14,7 +14,7 @@ public class RobotView : View<Robot>
     protected override void Refresh()
     {
         UpdatePosition();
-        SpriteRenderer.sprite = SpriteManager.GetSprite("Robot");
+        SpriteRenderer.sprite = SpriteManager.GetSprite(Target.Type);
     }
 
     protected override void UpdatePosition()

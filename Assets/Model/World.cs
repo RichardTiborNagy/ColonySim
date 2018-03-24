@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Random = UnityEngine.Random;
 
 public class World : IDisplayable
 {
@@ -8,6 +9,7 @@ public class World : IDisplayable
 
     public World(int size)
     {
+        Current = this;
         this._size = size;
         Buildings = new List<Building>();
         Tiles = new Tile[size, size];
@@ -18,15 +20,26 @@ public class World : IDisplayable
                 Tiles[i, j] = new Tile(i, j);
             }
         }
-
-        AvailableJobs = new List<Job>();
-        TakenJobs = new List<Job>();
+        
         Robots = new List<Robot>();
-        Current = this;
+
+        JobManager = new JobManager();
 
         Graph = new Graph(this);
-
+        
         OnChange();
+
+        GenerateEnvironment();
+    }
+
+    private void GenerateEnvironment()
+    {
+        for (int i = 0; i < 200; i++)
+        {
+            var x = Random.Range(0, 50);
+            var y = Random.Range(0, 50);
+            CreateBuilding(Prototypes.Buildings.Get("Tree"), Tiles[x, y]);
+        }
     }
 
     public Tile[,] Tiles { get; }
@@ -47,23 +60,7 @@ public class World : IDisplayable
 
     public List<Robot> Robots { get; private set; }
 
-    public List<Job> AvailableJobs { get; private set; }
-
-    public List<Job> TakenJobs { get; private set; }
-
-    public void TakeJob(Job job)
-    {
-        AvailableJobs.Remove(job);
-        TakenJobs.Add(job);
-    }
-    
-    public void GiveUpJob(Job jobToGiveUp)
-    {
-        TakenJobs.Remove(jobToGiveUp);
-        AvailableJobs.Add(jobToGiveUp);
-    }
-
-    public IEnumerable<Job> Jobs => AvailableJobs.Concat(TakenJobs);
+    public JobManager JobManager { get; private set; }
 
     public void Update(float deltaTime)
     {
@@ -71,10 +68,7 @@ public class World : IDisplayable
 
         Buildings.ForEach(building => building.Update(deltaTime));
 
-        //AvailableJobs.ForEach(job => job.Timeout += deltaTime);
-
-        if (TakenJobs.RemoveAll(job => job.IsComplete) /*+ AvailableJobs.RemoveAll(job => job.Timeout > 5)*/ > 0)
-            OnChange();
+        JobManager.Update(deltaTime);
     }
 
 
@@ -86,17 +80,10 @@ public class World : IDisplayable
         OnChange();
     }
 
-    public void CreateJob(Job protoJob, Tile tile)
-    {
-        if (!protoJob.CanCreate(tile))
-            return;
-        var jobToCreate = new Job(protoJob) {Tile = tile};
-        AvailableJobs.Add(jobToCreate);
-        OnChange();
-    }
-
     public void CreateBuilding(Building protoBuilding, Tile tile)
     {
+        if (tile.HasBuilding) return;
+
         var tilesToOccupy = new List<Tile>();
 
         for (int i = 0; i < protoBuilding.Size; i++)
@@ -118,8 +105,42 @@ public class World : IDisplayable
 
         Buildings.Add(buildingToCreate);
         tilesToOccupy.ForEach(t => t.Building = buildingToCreate);
-
+        tilesToOccupy.ForEach(t => t.Neighbors.Where(n => n.Building?.Conjoined ?? false).ToList().ForEach(n => n?.Building?.OnChange()));
         tilesToOccupy.ForEach(t => Graph.RecreateEdges(t));
+
+        buildingToCreate.OnChange();
+
+        OnChange();
+    }
+
+    public void DemolishBuilding(Tile tile)
+    {
+        if (!tile.HasBuilding) return;
+        var buildingToDemolish = tile.Building;
+        var mainTile = buildingToDemolish.Tile;
+        var tilesToDemolish = new List<Tile>();
+
+        for (int i = 0; i < buildingToDemolish.Size; i++)
+        {
+            for (int j = 0; j < buildingToDemolish.Size; j++)
+            {
+                var tileToDemolish = Tiles[mainTile.X + i, mainTile.Y + j];
+                tilesToDemolish.Add(tileToDemolish);
+            }
+        }
+
+        buildingToDemolish.Tile = null;
+        Buildings.Remove(buildingToDemolish);
+        tilesToDemolish.ForEach(t => t.Building = null);
+        tilesToDemolish.ForEach(t => Graph.RecreateEdges(t));
+
+        foreach (var tileToDemolish in tilesToDemolish)
+        {
+            foreach (var neighbor in tileToDemolish.Neighbors)
+            {
+                neighbor?.Building?.OnChange();
+            }
+        }
 
         OnChange();
     }
@@ -129,6 +150,7 @@ public class World : IDisplayable
     public int X => 0;
 
     public int Y => 0;
+    public int Resources { get; set; } = 800;
 
     public event Action Changed;
 

@@ -39,36 +39,29 @@ public class WorldView : View<World>
             }
         }
 
-        foreach (var building in World.Buildings)
+        var newBuildingsToDisplay = World.Current.Buildings.Where(b => !BuildingViews.ContainsKey(b)).ToList();
+        foreach (var building in newBuildingsToDisplay)
         {
-            if (!BuildingViews.ContainsKey(building))
-            {
-                var buildingGo = Instantiate(ViewManager.GetView("Building"));
-                buildingGo.GetComponent<BuildingView>().SetTarget(building);
-                BuildingViews.Add(building, buildingGo);
-            }
+            var buildingGo = Instantiate(ViewManager.GetView("Building"));
+            buildingGo.GetComponent<BuildingView>().SetTarget(building);
+            BuildingViews.Add(building, buildingGo);
         }
 
-        foreach (var building in BuildingViews.Keys)
+        var buildingsToDestroy = BuildingViews.Keys.Where(b => !World.Current.Buildings.Contains(b)).ToList();
+        foreach (var building in buildingsToDestroy)
         {
-            if (!World.Buildings.Contains(building))
-            {
-                BuildingViews.Remove(building);
-                Destroy(BuildingViews[building]);
-            }
+            Destroy(BuildingViews[building]);
+            BuildingViews.Remove(building);
         }
 
-        foreach (var robot in World.Robots)
+        var newRobotsToDisplay = World.Current.Robots.Where(r => !RobotViews.ContainsKey(r)).ToList();
+        foreach (var robot in newRobotsToDisplay)
         {
-            if (!RobotViews.ContainsKey(robot))
-            {
-                var robotGo = Instantiate(ViewManager.GetView("Robot"));
-                robotGo.GetComponent<RobotView>().SetTarget(robot);
-                RobotViews.Add(robot, robotGo);
-            }
+            var robotGo = Instantiate(ViewManager.GetView("Robot"));
+            robotGo.GetComponent<RobotView>().SetTarget(robot);
+            RobotViews.Add(robot, robotGo);
         }
 
-        // todo update iterations up from here
         var robotsToDestroy = RobotViews.Keys.Where(r => !World.Robots.Contains(r)).ToList();
         foreach (var robot in robotsToDestroy)
         {
@@ -76,7 +69,7 @@ public class WorldView : View<World>
             RobotViews.Remove(robot);
         }
 
-        var newJobsToDisplay = World.Jobs.Where(j => !JobViews.ContainsKey(j)).ToList();
+        var newJobsToDisplay = World.JobManager.Jobs.Where(j => !JobViews.ContainsKey(j)).ToList();
         foreach (var job in newJobsToDisplay)
         {
             var jobGo = Instantiate(ViewManager.GetView("Job"));
@@ -84,7 +77,7 @@ public class WorldView : View<World>
             JobViews.Add(job, jobGo);
         }
 
-        var jobsToDestroy = JobViews.Keys.Where(j => !World.Jobs.Contains(j)).ToList();
+        var jobsToDestroy = JobViews.Keys.Where(j => !World.JobManager.Jobs.Contains(j)).ToList();
         foreach (var job in jobsToDestroy)
         {
             var jobGo = JobViews[job];

@@ -18,18 +18,20 @@ public class Tile : IDisplayable
     public int X { get; }
     public int Y { get; }
 
-    public bool Empty => Building == null && Resource == null && World.Current.Jobs.All(j => j.Tile != this);
+    public bool Empty => Building == null && Resource == null && World.Current.JobManager.Jobs.All(j => j.Tile != this);
+
+    public bool HasBuilding => Building != null;
 
     public bool HasBuildingWithType(string type) => Building != null && Building.Type == type;
 
     public bool HasResourceWithType(string type) => Resource != null && Resource.Type == type;
     
-    public IEnumerable<Tile> Neighbors
+    public List<Tile> Neighbors
     {
         get
         {
             var neighbors = new List<Tile>(4) {Up, Right, Down, Left};
-            return neighbors.Where(t => t != null);
+            return neighbors.Where(t => t != null).ToList();
         }
     }
 

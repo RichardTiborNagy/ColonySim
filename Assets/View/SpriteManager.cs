@@ -27,4 +27,9 @@ public static class SpriteManager
     {
         return Sprites["Road_" + Random.Range(0, 8)];
     }
+
+    public static Sprite GetRandomTreeSprite()
+    {
+        return Sprites["Tree_" + Random.Range(0, 5)];
+    }
 }
