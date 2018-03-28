@@ -56,3 +56,6 @@ TagManager:
   - name: Entity
     uniqueID: 3177833203
     locked: 0
+  - name: Mouse
+    uniqueID: 3961150609
+    locked: 0
