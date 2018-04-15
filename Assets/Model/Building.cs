@@ -15,14 +15,24 @@ public class Building : IDisplayable, IPrototypable
 
     public bool Conjoined { get; }
 
+    public float? UpdateInterval { get; set; }
+
     public int X => Tile.X;
     public int Y => Tile.Y;
 
-    private readonly Action<Building, float> OnUpdate;
+    private readonly Action<Building> OnUpdate;
+
+    private float timer;
 
     public void Update(float deltaTime)
     {
-        OnUpdate?.Invoke(this, deltaTime);
+        if (UpdateInterval == null) return;
+        timer -= deltaTime;
+        if (timer <= 0)
+        {
+            timer = UpdateInterval ?? 0f;
+            OnUpdate?.Invoke(this);
+        }
     }
 
     public event Action Changed;
@@ -34,12 +44,14 @@ public class Building : IDisplayable, IPrototypable
     /// <summary>
     /// Used to create prototypes
     /// </summary>
-    public Building(string type, int size, float movementModifier, bool conjoined, Action<Building, float> onUpdate)
+    public Building(string type, int size, float movementModifier, bool conjoined = false, float? updateInterval = null, Action<Building> onUpdate = null)
     {
         Type = type;
         Size = size;
         MovementModifier = movementModifier;
         Conjoined = conjoined;
+        UpdateInterval = updateInterval;
+        timer = updateInterval ?? 0;
         OnUpdate = onUpdate;
     }
 
@@ -48,10 +60,12 @@ public class Building : IDisplayable, IPrototypable
     /// </summary>
     public Building(Building other)
     {
-        OnUpdate = other.OnUpdate;
         Type = other.Type;
         Size = other.Size;
         MovementModifier = other.MovementModifier;
         Conjoined = other.Conjoined;
+        UpdateInterval = other.UpdateInterval;
+        timer = other.UpdateInterval ?? 0;
+        OnUpdate = other.OnUpdate;
     }
 }

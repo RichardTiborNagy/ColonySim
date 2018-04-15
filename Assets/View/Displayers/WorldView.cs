@@ -12,6 +12,7 @@ public class WorldView : View<World>
     public Dictionary<Building, GameObject> BuildingViews = new Dictionary<Building, GameObject>();
     public Dictionary<Robot, GameObject> RobotViews = new Dictionary<Robot, GameObject>();
     public Dictionary<Job, GameObject> JobViews = new Dictionary<Job, GameObject>();
+    public Dictionary<Enemy, GameObject> EnemyViews = new Dictionary<Enemy, GameObject>();
 
     
     private new void Awake()
@@ -83,6 +84,21 @@ public class WorldView : View<World>
             var jobGo = JobViews[job];
             Destroy(jobGo);
             JobViews.Remove(job);
+        }
+
+        var newEnemiesToDisplay = World.Current.Enemies.Where(e => !EnemyViews.ContainsKey(e)).ToList();
+        foreach (var enemy in newEnemiesToDisplay)
+        {
+            var enemyGo = Instantiate(ViewManager.GetView("Enemy"));
+            enemyGo.GetComponent<EnemyView>().SetTarget(enemy);
+            EnemyViews.Add(enemy, enemyGo);
+        }
+
+        var enemiesToDestroy = EnemyViews.Keys.Where(e => !World.Enemies.Contains(e)).ToList();
+        foreach (var enemy in enemiesToDestroy)
+        {
+            Destroy(EnemyViews[enemy]);
+            EnemyViews.Remove(enemy);
         }
 
     }

@@ -14,7 +14,7 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         Camera = GetComponent<Camera>();
-        transform.position = new Vector3(50, 50, -10);
+        transform.position = new Vector3(24, 24, -10);
     }
 
     private void Update ()

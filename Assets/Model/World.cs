@@ -23,6 +23,8 @@ public class World : IDisplayable
         
         Robots = new List<Robot>();
 
+        Enemies = new List<Enemy>();
+
         JobManager = new JobManager();
 
         Graph = new Graph(this);
@@ -34,6 +36,8 @@ public class World : IDisplayable
 
     private void GenerateEnvironment()
     {
+        CreateBuilding(Prototypes.Buildings.Get("HeadQuarter"), Tiles[24,24]);
+        CreateBuilding(Prototypes.Buildings.Get("Spawner"), Tiles[3, 3]);
         for (int i = 0; i < 200; i++)
         {
             var x = Random.Range(0, 50);
@@ -60,11 +64,21 @@ public class World : IDisplayable
 
     public List<Robot> Robots { get; private set; }
 
+    public List<Enemy> Enemies { get; private set; }
+
     public JobManager JobManager { get; private set; }
 
     public void Update(float deltaTime)
     {
         Robots.ForEach(robot => robot.Update(deltaTime));
+
+        try
+        {
+            Enemies.ForEach(enemy => enemy.Update(deltaTime));
+        }
+        catch
+        {
+        }
 
         Buildings.ForEach(building => building.Update(deltaTime));
 
@@ -77,6 +91,21 @@ public class World : IDisplayable
         var robotToCreate = new Robot(protoRobot);
         Robots.Add(robotToCreate);
         robotToCreate.Tile = robotToCreate.Destination = robotToCreate.NextTile = tile;
+        OnChange();
+    }
+
+    public void CreateEnemy(Enemy protoEnemy, Tile tile)
+    {
+        var enemyToCreate = new Enemy(protoEnemy);
+        Enemies.Add(enemyToCreate);
+        enemyToCreate.Tile = enemyToCreate.NextTile = tile;
+        //enemyToCreate.Destination = HeadQuarters.Tile;
+        OnChange();
+    }
+
+    public void DestroyEnemy(Enemy enemy)
+    {
+        Enemies.Remove(enemy);
         OnChange();
     }
 
@@ -145,12 +174,15 @@ public class World : IDisplayable
         OnChange();
     }
 
+    public Building HeadQuarters => /*Buildings.Find(b => b.Type == "HeadQuarter");//*/ Buildings[0];
+
     public static World Current { get; private set; }
 
     public int X => 0;
 
     public int Y => 0;
     public int Resources { get; set; } = 800;
+    public int Health { get; set; } = 500;
 
     public event Action Changed;
 

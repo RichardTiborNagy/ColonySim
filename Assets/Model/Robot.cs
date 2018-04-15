@@ -14,6 +14,8 @@ public class Robot : IDisplayable, IPrototypable
 
     public Tile Destination { get; set; }
 
+    public float Charge { get; set; } = 20f;
+
     public float MovementProgress { get; private set; }
 
     public int Speed { get; private set; }
@@ -31,6 +33,7 @@ public class Robot : IDisplayable, IPrototypable
 
     public void GiveUpJob()
     {
+        if (Job.Type == "Charge") return;
         World.Current.JobManager.GiveUpJob(this);
         Job = null;
         Destination = NextTile;
@@ -44,6 +47,27 @@ public class Robot : IDisplayable, IPrototypable
         MovementProgress = 0;
         Path = Pathfinder.FindPath(Tile, destination);
         return Path != null;
+    }
+
+    private void UpdateCharge(float deltaTime)
+    {
+        Charge -= deltaTime;
+        if (Charge < 10f)
+        {
+            if (Job != null && Job.Type != "Charge")
+            {
+                GiveUpJob();
+            }
+            else if (Job != null)
+            {
+                return;
+            }
+            else
+            {
+                Job = new Job(Prototypes.Jobs.Get("Charge")) { Tile = World.Current.HeadQuarters.Tile, Robot = this };
+                Destination = Job.Tile;
+            }
+        }
     }
 
     private void UpdateMovement(float deltaTime)
@@ -110,6 +134,7 @@ public class Robot : IDisplayable, IPrototypable
 
     public void Update(float deltaTime)
     {
+        UpdateCharge(deltaTime);
         UpdateMovement(deltaTime);
         UpdateWork(deltaTime);
         OnChange();
