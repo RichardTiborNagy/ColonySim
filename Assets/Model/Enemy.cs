@@ -19,7 +19,7 @@ public class Enemy : IDisplayable, IPrototypable
     
     public float MovementProgress { get; private set; }
 
-    public int Speed { get; private set; }
+    public int Speed { get; set; }
 
     private Queue<Tile> Path;
 

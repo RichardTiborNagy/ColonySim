@@ -47,7 +47,8 @@ public class JobManager
 
     public void CreateJob(Job protoJob, Tile tile)
     {
-        if (Jobs.Any(j => tile == j.Tile) || !protoJob.CanCreate(tile)) return;
+        if (world.Resources < protoJob.Cost || Jobs.Any(j => tile == j.Tile) || !protoJob.CanCreate(tile)) return;
+        world.Resources -= protoJob.Cost;
         var jobToCreate = new Job(protoJob) { Tile = tile };
         AvailableJobs.Add(jobToCreate);
         world.OnChange();
@@ -81,6 +82,7 @@ public class JobManager
         if (job == null) return;
         world.Robots.ForEach(r => timeOuts.Add(new TimeOut(r, job, timeOutTime)));
         var robot = world.Robots.FirstOrDefault(r => r.Job == job);
+        world.Resources += job.Cost;
         robot?.GiveUpJob();
         TakenJobs.Remove(job);
         AvailableJobs.Remove(job);

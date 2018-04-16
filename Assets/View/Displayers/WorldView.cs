@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 public class WorldView : View<World>
 {
@@ -13,8 +14,12 @@ public class WorldView : View<World>
     public Dictionary<Robot, GameObject> RobotViews = new Dictionary<Robot, GameObject>();
     public Dictionary<Job, GameObject> JobViews = new Dictionary<Job, GameObject>();
     public Dictionary<Enemy, GameObject> EnemyViews = new Dictionary<Enemy, GameObject>();
+    public Dictionary<Projectile, GameObject> ProjectileViews = new Dictionary<Projectile, GameObject>();
 
-    
+    public GameObject ResourceWidget;
+    public GameObject HealthWidget;
+    //public GameObject TimeWidget;
+
     private new void Awake()
     {
         World = new World(50);
@@ -22,9 +27,17 @@ public class WorldView : View<World>
         Refresh();
     }
 
+    public void BuyRobot(string type)
+    {
+        World.CreateRobot(Prototypes.Robots.Get(type), World.HeadQuarters.Tile);
+    }
+
     public void Update()
     {
         World.Update(Time.deltaTime);
+        ResourceWidget.GetComponentInChildren<Text>().text = $"Resources: {World.Resources}";
+        HealthWidget.GetComponentInChildren<Text>().text = $"Health: {World.Health}";
+        //TimeWidget.GetComponentInChildren<Text>().text = $"Resources: {World.Time}";
         //Debug.Log(JobViews.Count);
     }
 
@@ -99,6 +112,21 @@ public class WorldView : View<World>
         {
             Destroy(EnemyViews[enemy]);
             EnemyViews.Remove(enemy);
+        }
+
+        var newProjectilesToDisplay = World.Current.Projectiles.Where(p => !ProjectileViews.ContainsKey(p)).ToList();
+        foreach (var projectile in newProjectilesToDisplay)
+        {
+            var projectileGo = Instantiate(ViewManager.GetView("Projectile"));
+            projectileGo.GetComponent<ProjectileView>().SetTarget(projectile);
+            ProjectileViews.Add(projectile, projectileGo);
+        }
+
+        var projectilesToDestroy = ProjectileViews.Keys.Where(p => !World.Projectiles.Contains(p)).ToList();
+        foreach (var projectile in projectilesToDestroy)
+        {
+            Destroy(ProjectileViews[projectile]);
+            ProjectileViews.Remove(projectile);
         }
 
     }

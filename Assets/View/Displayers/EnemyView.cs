@@ -22,13 +22,12 @@ public class EnemyView : View<Enemy>
         UpdatePosition();
         SpriteRenderer.sprite = SpriteManager.GetSprite(Target.Type);
 
-        int progress = Mathf.Clamp(Mathf.RoundToInt(Target.Health / Target.MaxHealth * numberOfHealthSprites), 0, numberOfHealthSprites - 1);
-        HealthSpriteRenderer.sprite = SpriteManager.GetSprite("Progress_Green_" + progress);
+        int health = Mathf.Clamp(Mathf.RoundToInt((float)Target.Health / (float)Target.MaxHealth * numberOfHealthSprites), 0, numberOfHealthSprites - 1);
+        HealthSpriteRenderer.sprite = SpriteManager.GetSprite("Progress_Green_" + health);
     }
 
     protected override void UpdatePosition()
     {
-        //if (Target.NextTile == null) return;
         gameObject.transform.position = Vector3.Lerp(new Vector3(Target.Tile.X, Target.Tile.Y, 0),
             new Vector3(Target.NextTile.X, Target.NextTile.Y, 0), Target.MovementProgress);
     }

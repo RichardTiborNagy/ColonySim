@@ -15,6 +15,8 @@ public class Job : IPrototypable, IDisplayable
 
     public float Timeout { get; set; }
 
+    public int Cost { get; set; }
+
     public Robot Robot { get; set; }
 
     public void Work(float deltaTime)
@@ -36,7 +38,7 @@ public class Job : IPrototypable, IDisplayable
 
     public readonly Func<Tile, bool> CanCreate;
 
-    public Job(string type, Action<Job> onComplete, float timeToComplete, string robotType, Func<Tile, bool> canCreate)
+    public Job(string type, Action<Job> onComplete, float timeToComplete, string robotType, Func<Tile, bool> canCreate, int cost)
     {
         Type = type;
         OnComplete = onComplete;
@@ -45,6 +47,7 @@ public class Job : IPrototypable, IDisplayable
         CanCreate = canCreate;
         AmountDone = 0f;
         Timeout = 0f;
+        Cost = cost;
     }
 
     public Job(Job other)
@@ -54,6 +57,7 @@ public class Job : IPrototypable, IDisplayable
         TimeToComplete = other.TimeToComplete;
         Type = other.Type;
         OnComplete = other.OnComplete;
+        Cost = other.Cost;
     }
 
     public int X => Tile.X;

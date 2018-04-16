@@ -14,13 +14,15 @@ public class Robot : IDisplayable, IPrototypable
 
     public Tile Destination { get; set; }
 
-    public float Charge { get; set; } = 20f;
+    public float Charge { get; set; } = 100f;
 
     public float MovementProgress { get; private set; }
 
     public int Speed { get; private set; }
 
     public Job Job { get; private set; }
+
+    public int Cost { get; private set; }
 
     //public State State { get; private set; }
 
@@ -140,17 +142,19 @@ public class Robot : IDisplayable, IPrototypable
         OnChange();
     }
 
-    public Robot(string type, int speed)
+    public Robot(string type, int speed, int cost)
     {
         Type = type;
         Speed = speed;
         MovementProgress = 0f;
+        Cost = cost;
     }
 
     public Robot(Robot other)
     {
         Type = other.Type;
         Speed = other.Speed;
+        Cost = other.Cost;
     }
 
     public Robot Clone(Robot other)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class World : IDisplayable
@@ -24,6 +25,8 @@ public class World : IDisplayable
         Robots = new List<Robot>();
 
         Enemies = new List<Enemy>();
+
+        Projectiles = new List<Projectile>();
 
         JobManager = new JobManager();
 
@@ -66,31 +69,63 @@ public class World : IDisplayable
 
     public List<Enemy> Enemies { get; private set; }
 
+    public List<Projectile> Projectiles { get; private set; }
+
     public JobManager JobManager { get; private set; }
 
     public void Update(float deltaTime)
     {
-        Robots.ForEach(robot => robot.Update(deltaTime));
 
-        try
-        {
-            Enemies.ForEach(enemy => enemy.Update(deltaTime));
-        }
-        catch
-        {
-        }
-
-        Buildings.ForEach(building => building.Update(deltaTime));
-
+        UpdateRobots(deltaTime);
+        UpdateEnemies(deltaTime);
+        UpdateBuildings(deltaTime);
+        UpdateProjectiles(deltaTime);
         JobManager.Update(deltaTime);
+    }
+
+    private void UpdateRobots(float deltaTime)
+    {
+        Robots.ForEach(robot => robot.Update(deltaTime));
+    }
+
+    private void UpdateEnemies(float deltaTime)
+    {
+        Enemies.ForEach(enemy => enemy.Update(deltaTime));
+    }
+
+    private void UpdateBuildings(float deltaTime)
+    {
+        Buildings.ForEach(building => building.Update(deltaTime));
+    }
+
+    private void UpdateProjectiles(float deltaTime)
+    {
+        Projectiles.ForEach(projectile => projectile.Update(deltaTime));
     }
 
 
     public void CreateRobot(Robot protoRobot, Tile tile)
     {
+        if (protoRobot.Cost > Resources) return;
         var robotToCreate = new Robot(protoRobot);
         Robots.Add(robotToCreate);
         robotToCreate.Tile = robotToCreate.Destination = robotToCreate.NextTile = tile;
+        Resources -= robotToCreate.Cost;
+        OnChange();
+    }
+
+    public void CreateProjectile(Projectile protoProjectile, Tile tile, Enemy target)
+    {
+        var projectileToCreate = new Projectile(protoProjectile);
+        projectileToCreate.Target = target;
+        projectileToCreate.Position = new Vector2(tile.X, tile.Y);
+        Projectiles.Add(projectileToCreate);
+        OnChange();
+    }
+
+    public void DestroyProjectile(Projectile projectile)
+    {
+        Projectiles.Remove(projectile);
         OnChange();
     }
 
