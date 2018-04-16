@@ -82,7 +82,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aedf4b17228ce8f419225a3e118c68db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChargeBar: {fileID: 0}
+  ChargeBar: {fileID: 1049661093144188}
 --- !u!212 &212245829312021568
 SpriteRenderer:
   m_ObjectHideFlags: 1
