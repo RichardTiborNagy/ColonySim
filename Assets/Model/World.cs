@@ -6,9 +6,15 @@ using Random = UnityEngine.Random;
 
 public class World : IDisplayable
 {
+    private const float StartingTime = 300f;
+
     private readonly int _size;
 
-    public World(int size)
+    public bool Paused { get; set; } = true;
+
+    public float RemainingTime { get; set; } 
+
+    public World(Difficulty difficulty, int size = 50)
     {
         Current = this;
         this._size = size;
@@ -34,17 +40,36 @@ public class World : IDisplayable
         
         OnChange();
 
-        GenerateEnvironment();
+        GenerateEnvironment(size, difficulty);
+
+        RemainingTime = StartingTime;
     }
 
-    private void GenerateEnvironment()
+    private void GenerateEnvironment(int size, Difficulty difficulty)
     {
         CreateBuilding(Prototypes.Buildings.Get("HeadQuarter"), Tiles[24,24]);
-        CreateBuilding(Prototypes.Buildings.Get("Spawner"), Tiles[3, 3]);
+        switch (difficulty)
+        {
+            case Difficulty.Easy:
+                CreateBuilding(Prototypes.Buildings.Get("Spawner"), Tiles[3, 3]);
+                break;
+            case Difficulty.Medium:
+                CreateBuilding(Prototypes.Buildings.Get("Spawner"), Tiles[3, 3]);
+                CreateBuilding(Prototypes.Buildings.Get("Spawner"), Tiles[size - 6, 3]);
+                break;
+            case Difficulty.Hard:
+                CreateBuilding(Prototypes.Buildings.Get("Spawner"), Tiles[3, 3]);
+                CreateBuilding(Prototypes.Buildings.Get("Spawner"), Tiles[size - 6, 3]);
+                CreateBuilding(Prototypes.Buildings.Get("Spawner"), Tiles[3, size - 6]);
+                CreateBuilding(Prototypes.Buildings.Get("Spawner"), Tiles[size - 6, size - 3]);
+                break;
+            default:
+                return;
+        }
         for (int i = 0; i < 200; i++)
         {
-            var x = Random.Range(0, 50);
-            var y = Random.Range(0, 50);
+            var x = Random.Range(0, size);
+            var y = Random.Range(0, size);
             CreateBuilding(Prototypes.Buildings.Get("Tree"), Tiles[x, y]);
         }
     }
@@ -75,7 +100,8 @@ public class World : IDisplayable
 
     public void Update(float deltaTime)
     {
-
+        if (Paused) return;
+        RemainingTime -= deltaTime;
         UpdateRobots(deltaTime);
         UpdateEnemies(deltaTime);
         UpdateBuildings(deltaTime);
@@ -96,6 +122,11 @@ public class World : IDisplayable
     private void UpdateBuildings(float deltaTime)
     {
         Buildings.ForEach(building => building.Update(deltaTime));
+        var spawnerInterval = Mathf.Max(1f, RemainingTime / StartingTime * 5);
+        foreach (var building in Buildings.Where(b => b.Type == "Spawner"))
+        {
+            building.UpdateInterval = spawnerInterval;
+        }
     }
 
     private void UpdateProjectiles(float deltaTime)
@@ -217,7 +248,7 @@ public class World : IDisplayable
 
     public int Y => 0;
     public int Resources { get; set; } = 800;
-    public int Health { get; set; } = 500;
+    public int Health { get; set; } = 100;
 
     public event Action Changed;
 

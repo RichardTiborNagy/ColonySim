@@ -9,6 +9,8 @@ public static class Pathfinder
 
     public static Queue<Tile> FindPath(Tile starTile, Tile destinationTile)
     {
+        world = World.Current;
+
         Dictionary<Tile, Node> nodes = world.Graph.Nodes;
         
         Node start = nodes[starTile];

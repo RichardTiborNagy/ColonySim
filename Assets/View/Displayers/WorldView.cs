@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEditor;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
@@ -16,15 +17,57 @@ public class WorldView : View<World>
     public Dictionary<Enemy, GameObject> EnemyViews = new Dictionary<Enemy, GameObject>();
     public Dictionary<Projectile, GameObject> ProjectileViews = new Dictionary<Projectile, GameObject>();
 
+    public GameObject GameplayCanvas;
+    public GameObject MenuCanvas;
+
     public GameObject ResourceWidget;
     public GameObject HealthWidget;
-    //public GameObject TimeWidget;
+    public GameObject TimeWidget;
+    public GameObject Text;
 
     private new void Awake()
     {
-        World = new World(50);
+        World = new World(Difficulty.Easy);
         SetTarget(World);
         Refresh();
+    }
+
+    public void NewGame(int difficulty)
+    {
+        World = new World((Difficulty)difficulty);
+        foreach (var keyValuePair in TileViews)
+        {
+            Destroy(keyValuePair.Value);
+        }
+        foreach (var keyValuePair in BuildingViews)
+        {
+            Destroy(keyValuePair.Value);
+        }
+        foreach (var keyValuePair in RobotViews)
+        {
+            Destroy(keyValuePair.Value);
+        }
+        foreach (var keyValuePair in JobViews)
+        {
+            Destroy(keyValuePair.Value);
+        }
+        foreach (var keyValuePair in EnemyViews)
+        {
+            Destroy(keyValuePair.Value);
+        }
+        foreach (var keyValuePair in ProjectileViews)
+        {
+            Destroy(keyValuePair.Value);
+        }
+        TileViews = new Dictionary<Tile, GameObject>();
+        BuildingViews = new Dictionary<Building, GameObject>();
+        RobotViews = new Dictionary<Robot, GameObject>();
+        JobViews = new Dictionary<Job, GameObject>();
+        EnemyViews = new Dictionary<Enemy, GameObject>();
+        ProjectileViews = new Dictionary<Projectile, GameObject>();
+        SetTarget(World);
+        Refresh();
+        Pause();
     }
 
     public void BuyRobot(string type)
@@ -37,8 +80,36 @@ public class WorldView : View<World>
         World.Update(Time.deltaTime);
         ResourceWidget.GetComponentInChildren<Text>().text = $"Resources: {World.Resources}";
         HealthWidget.GetComponentInChildren<Text>().text = $"Health: {World.Health}";
-        //TimeWidget.GetComponentInChildren<Text>().text = $"Resources: {World.Time}";
-        //Debug.Log(JobViews.Count);
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Pause();
+        }
+        TimeWidget.GetComponentInChildren<Text>().text = $"Time left: {Mathf.RoundToInt(World.RemainingTime)}";
+        if (!World.Paused)
+        {
+            CheckGameOver();
+        }
+    }
+
+    private void Pause()
+    {
+        World.Paused = !World.Paused;
+        GameplayCanvas.SetActive(!GameplayCanvas.active);
+        MenuCanvas.SetActive(!MenuCanvas.active);
+    }
+
+    private void CheckGameOver()
+    {
+        if (World.RemainingTime < 0)
+        {
+            Text.GetComponentInChildren<Text>().text = "You won!";
+            Pause();
+        }
+        else if (World.Health < 0)
+        {
+            Text.GetComponentInChildren<Text>().text = "You lost!";
+            Pause();
+        }
     }
 
     protected override void Refresh()

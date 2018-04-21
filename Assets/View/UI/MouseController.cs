@@ -14,7 +14,7 @@ public class MouseController : MonoBehaviour
 
     void Update () {
 
-        if (Input.mousePosition.x <= 128 && Input.mousePosition.y <= 75) return;
+        if (Input.mousePosition.x <= 128 && Input.mousePosition.y <= 215) return;
 
         Vector3 currPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         currentX = Mathf.RoundToInt(currPos.x);
