@@ -97,7 +97,7 @@ public static class Prototypes
             job => World.Current.DemolishBuilding(job.Tile),
             5,
             "Construction",
-            tile => tile.HasBuilding,
+            tile => tile.HasBuilding && tile.Building.Type != "Spawner" && tile.Building.Type != "HeadQuarter",
             0));
 
         Jobs.Add(new Job("Gather",

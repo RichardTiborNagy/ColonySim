@@ -45,11 +45,11 @@ public class JobManager
 
     public IEnumerable<Job> Jobs => AvailableJobs.Concat(TakenJobs);
 
-    public void CreateJob(Job protoJob, Tile tile)
+    public void CreateJob(Job protoJob, Tile tile, float amountDone = 0)
     {
-        if (world.Resources < protoJob.Cost || Jobs.Any(j => tile == j.Tile) || !protoJob.CanCreate(tile)) return;
-        world.Resources -= protoJob.Cost;
-        var jobToCreate = new Job(protoJob) { Tile = tile };
+        if ((world.Resources < protoJob.Cost && amountDone == 0) || Jobs.Any(j => tile == j.Tile) || !protoJob.CanCreate(tile)) return;
+        if (amountDone == 0) world.Resources -= protoJob.Cost;
+        var jobToCreate = new Job(protoJob) { Tile = tile, AmountDone = amountDone };
         AvailableJobs.Add(jobToCreate);
         world.OnChange();
     }

@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 using UnityEngine;
+using UnityEngine.Collections;
 using Random = UnityEngine.Random;
 
-public class World : IDisplayable
+public class World : IDisplayable, IXmlSerializable
 {
     private const float StartingTime = 300f;
 
-    private readonly int _size;
+    private int _size;
 
     public bool Paused { get; set; } = true;
 
@@ -18,7 +22,6 @@ public class World : IDisplayable
     {
         Current = this;
         this._size = size;
-        Buildings = new List<Building>();
         Tiles = new Tile[size, size];
         for (int i = 0; i < size; i++)
         {
@@ -27,7 +30,9 @@ public class World : IDisplayable
                 Tiles[i, j] = new Tile(i, j);
             }
         }
-        
+
+        Buildings = new List<Building>();
+
         Robots = new List<Robot>();
 
         Enemies = new List<Enemy>();
@@ -43,6 +48,21 @@ public class World : IDisplayable
         GenerateEnvironment(size, difficulty);
 
         RemainingTime = StartingTime;
+    }
+
+    public World()
+    {
+        Current = this;
+
+        Buildings = new List<Building>();
+
+        Robots = new List<Robot>();
+
+        Enemies = new List<Enemy>();
+
+        Projectiles = new List<Projectile>();
+
+        JobManager = new JobManager();
     }
 
     private void GenerateEnvironment(int size, Difficulty difficulty)
@@ -74,7 +94,7 @@ public class World : IDisplayable
         }
     }
 
-    public Tile[,] Tiles { get; }
+    public Tile[,] Tiles { get; set; }
 
     public Tile this[int x, int y]
     {
@@ -135,13 +155,17 @@ public class World : IDisplayable
     }
 
 
-    public void CreateRobot(Robot protoRobot, Tile tile)
+    public void CreateRobot(Robot protoRobot, Tile tile, float charge = 0)
     {
-        if (protoRobot.Cost > Resources) return;
+        if (protoRobot.Cost > Resources && charge == 0) return;
         var robotToCreate = new Robot(protoRobot);
         Robots.Add(robotToCreate);
         robotToCreate.Tile = robotToCreate.Destination = robotToCreate.NextTile = tile;
-        Resources -= robotToCreate.Cost;
+        if(charge == 0) Resources -= robotToCreate.Cost;
+        if (charge > 0)
+        {
+            robotToCreate.Charge = charge;
+        }
         OnChange();
     }
 
@@ -160,12 +184,16 @@ public class World : IDisplayable
         OnChange();
     }
 
-    public void CreateEnemy(Enemy protoEnemy, Tile tile)
+    public void CreateEnemy(Enemy protoEnemy, Tile tile, int speed = 0, int health = 0)
     {
         var enemyToCreate = new Enemy(protoEnemy);
         Enemies.Add(enemyToCreate);
         enemyToCreate.Tile = enemyToCreate.NextTile = tile;
-        //enemyToCreate.Destination = HeadQuarters.Tile;
+        if (speed > 0 && health > 0)
+        {
+            enemyToCreate.Speed = speed;
+            enemyToCreate.Health = health;
+        }
         OnChange();
     }
 
@@ -255,5 +283,161 @@ public class World : IDisplayable
     public void OnChange()
     {
         Changed?.Invoke();
+    }
+
+    public XmlSchema GetSchema()
+    {
+        return null;
+    }
+
+    public void ReadXml(XmlReader reader)
+    {
+        _size = int.Parse(reader.GetAttribute("Size"));
+        Resources = int.Parse(reader.GetAttribute("Resources"));
+        RemainingTime = float.Parse(reader.GetAttribute("RemainingTime"));
+        Health = int.Parse(reader.GetAttribute("Health"));
+
+        Current = this;
+        Tiles = new Tile[_size, _size];
+        for (int i = 0; i < _size; i++)
+        {
+            for (int j = 0; j < _size; j++)
+            {
+                Tiles[i, j] = new Tile(i, j);
+            }
+        }
+
+        Buildings = new List<Building>();
+
+        Robots = new List<Robot>();
+
+        Enemies = new List<Enemy>();
+
+        Projectiles = new List<Projectile>();
+
+        JobManager = new JobManager();
+
+        Graph = new Graph(this);
+
+        OnChange();
+        
+        while (reader.Read())
+        {
+            switch (reader.Name)
+            {
+                case "Buildings":
+                    ReadXmlBuildings(reader);
+                    break;
+                case "Robots":
+                    ReadXmlRobots(reader);
+                    break;
+                case "Enemies":
+                    ReadXmlEnemies(reader);
+                    break;
+                case "Jobs":
+                    ReadXmlJobs(reader);
+                    break;
+            }
+        }
+    }
+
+    private void ReadXmlBuildings(XmlReader reader)
+    {
+        if (!reader.ReadToDescendant("Building")) return;
+        do
+        {
+            CreateBuilding(Prototypes.Buildings.Get(reader.GetAttribute("Type")),
+                Tiles[int.Parse(reader.GetAttribute("X")), int.Parse(reader.GetAttribute("Y"))]);
+        } while (reader.ReadToNextSibling("Building"));
+    }
+
+    private void ReadXmlRobots(XmlReader reader)
+    {
+        if (!reader.ReadToDescendant("Robot")) return;
+        do
+        {
+            CreateRobot(Prototypes.Robots.Get(reader.GetAttribute("Type")),
+                Tiles[int.Parse(reader.GetAttribute("X")), int.Parse(reader.GetAttribute("Y"))],
+                float.Parse(reader.GetAttribute("Charge")));
+        } while (reader.ReadToNextSibling("Robot"));
+    }
+
+    private void ReadXmlEnemies(XmlReader reader)
+    {
+        if (!reader.ReadToDescendant("Enemy")) return;
+        do
+        {
+            CreateEnemy(Prototypes.Enemies.Get(reader.GetAttribute("Type")),
+                Tiles[int.Parse(reader.GetAttribute("X")), int.Parse(reader.GetAttribute("Y"))],
+                int.Parse(reader.GetAttribute("Speed")),
+                int.Parse(reader.GetAttribute("Health")));
+        } while (reader.ReadToNextSibling("Enemy"));
+    }
+
+    private void ReadXmlJobs(XmlReader reader)
+    {
+        if (!reader.ReadToDescendant("Job")) return;
+        do
+        {
+            JobManager.CreateJob(Prototypes.Jobs.Get(reader.GetAttribute("Type")),
+                Tiles[int.Parse(reader.GetAttribute("X")), int.Parse(reader.GetAttribute("Y"))],
+                float.Parse(reader.GetAttribute("AmountDone")));
+        } while (reader.ReadToNextSibling("Job"));
+    }
+
+    public void WriteXml(XmlWriter writer)
+    {
+        writer.WriteAttributeString("Size", _size.ToString());
+        writer.WriteAttributeString("Resources", Resources.ToString());
+        writer.WriteAttributeString("RemainingTime", RemainingTime.ToString());
+        writer.WriteAttributeString("Health", Health.ToString());
+
+        writer.WriteStartElement("Buildings");
+        foreach (var building in Buildings)
+        {
+            writer.WriteStartElement("Building");
+            writer.WriteAttributeString("Type", building.Type);
+            writer.WriteAttributeString("X", building.X.ToString());
+            writer.WriteAttributeString("Y", building.Y.ToString());
+            writer.WriteEndElement();
+        }
+        writer.WriteEndElement();
+
+        writer.WriteStartElement("Robots");
+        foreach (var robot in Robots)
+        {
+            writer.WriteStartElement("Robot");
+            writer.WriteAttributeString("Type", robot.Type);
+            writer.WriteAttributeString("X", robot.X.ToString());
+            writer.WriteAttributeString("Y", robot.Y.ToString());
+            writer.WriteAttributeString("Charge", robot.Charge.ToString());
+            writer.WriteEndElement();
+        }
+        writer.WriteEndElement();
+
+        writer.WriteStartElement("Enemies");
+        foreach (var enemy in Enemies)
+        {
+            writer.WriteStartElement("Enemy");
+            writer.WriteAttributeString("Type", enemy.Type);
+            writer.WriteAttributeString("X", enemy.X.ToString());
+            writer.WriteAttributeString("Y", enemy.Y.ToString());
+            writer.WriteAttributeString("Speed", enemy.Speed.ToString());
+            writer.WriteAttributeString("Health", enemy.Health.ToString());
+            writer.WriteEndElement();
+        }
+        writer.WriteEndElement();
+
+        writer.WriteStartElement("Jobs");
+        foreach (var job in JobManager.Jobs)
+        {
+            writer.WriteStartElement("Job");
+            writer.WriteAttributeString("Type", job.Type);
+            writer.WriteAttributeString("X", job.X.ToString());
+            writer.WriteAttributeString("Y", job.Y.ToString());
+            writer.WriteAttributeString("AmountDone", job.AmountDone.ToString());
+            writer.WriteEndElement();
+        }
+        writer.WriteEndElement();
     }
 }

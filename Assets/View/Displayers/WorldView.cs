@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using System.Linq;
+using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -94,6 +96,7 @@ public class WorldView : View<World>
     private void Pause()
     {
         World.Paused = !World.Paused;
+        Text.GetComponentInChildren<Text>().text = "Game paused";
         GameplayCanvas.SetActive(!GameplayCanvas.active);
         MenuCanvas.SetActive(!MenuCanvas.active);
     }
@@ -102,13 +105,13 @@ public class WorldView : View<World>
     {
         if (World.RemainingTime < 0)
         {
-            Text.GetComponentInChildren<Text>().text = "You won!";
             Pause();
+            Text.GetComponentInChildren<Text>().text = "You won!";
         }
         else if (World.Health < 0)
         {
-            Text.GetComponentInChildren<Text>().text = "You lost!";
             Pause();
+            Text.GetComponentInChildren<Text>().text = "You lost!";
         }
     }
 
@@ -200,5 +203,59 @@ public class WorldView : View<World>
             ProjectileViews.Remove(projectile);
         }
 
+    }
+
+    public void SaveWorld()
+    {
+        XmlSerializer serializer = new XmlSerializer(typeof(World));
+        TextWriter writer = new StringWriter();
+        serializer.Serialize(writer, World);
+        writer.Close();
+
+        Debug.Log(writer.ToString());
+
+        PlayerPrefs.SetString("SaveGame", writer.ToString());
+    }
+
+    public void LoadWorld()
+    {
+        XmlSerializer serializer = new XmlSerializer(typeof(World));
+        TextReader reader = new StringReader(PlayerPrefs.GetString("SaveGame"));
+        World = (World)serializer.Deserialize(reader);
+        reader.Close();
+
+        foreach (var keyValuePair in TileViews)
+        {
+            Destroy(keyValuePair.Value);
+        }
+        foreach (var keyValuePair in BuildingViews)
+        {
+            Destroy(keyValuePair.Value);
+        }
+        foreach (var keyValuePair in RobotViews)
+        {
+            Destroy(keyValuePair.Value);
+        }
+        foreach (var keyValuePair in JobViews)
+        {
+            Destroy(keyValuePair.Value);
+        }
+        foreach (var keyValuePair in EnemyViews)
+        {
+            Destroy(keyValuePair.Value);
+        }
+        foreach (var keyValuePair in ProjectileViews)
+        {
+            Destroy(keyValuePair.Value);
+        }
+        TileViews = new Dictionary<Tile, GameObject>();
+        BuildingViews = new Dictionary<Building, GameObject>();
+        RobotViews = new Dictionary<Robot, GameObject>();
+        JobViews = new Dictionary<Job, GameObject>();
+        EnemyViews = new Dictionary<Enemy, GameObject>();
+        ProjectileViews = new Dictionary<Projectile, GameObject>();
+        SetTarget(World);
+        Refresh();
+        Pause();
     }
 }
