@@ -152,6 +152,7 @@ public class Robot : IDisplayable, IPrototypable
 
     public Robot(Robot other)
     {
+        if (other == null) return;
         Type = other.Type;
         Speed = other.Speed;
         Cost = other.Cost;

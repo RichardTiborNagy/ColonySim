@@ -50,6 +50,7 @@ public class Projectile : IDisplayable, IPrototypable
 
     public Projectile(Projectile other)
     {
+        if (other == null) return;
         Type = other.Type;
         OnHit = other.OnHit;
         Speed = other.Speed;

@@ -9,6 +9,7 @@ public class PriorityQueue<T>
 
     public PriorityQueue(int startingSize = 10)
     {
+        if (startingSize < 0) return;
         wrappedQueue = new FastPriorityQueue<WrappedNode>(startingSize);
         mapDataToWrappedNode = new Dictionary<T, WrappedNode>();
     }

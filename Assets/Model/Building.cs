@@ -60,6 +60,7 @@ public class Building : IDisplayable, IPrototypable
     /// </summary>
     public Building(Building other)
     {
+        if (other == null) return;
         Type = other.Type;
         Size = other.Size;
         MovementModifier = other.MovementModifier;

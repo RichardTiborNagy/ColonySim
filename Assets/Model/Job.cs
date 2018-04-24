@@ -52,6 +52,7 @@ public class Job : IPrototypable, IDisplayable
 
     public Job(Job other)
     {
+        if (other == null) return;
         CanCreate = other.CanCreate;
         RobotType = other.RobotType;
         TimeToComplete = other.TimeToComplete;
@@ -60,8 +61,8 @@ public class Job : IPrototypable, IDisplayable
         Cost = other.Cost;
     }
 
-    public int X => Tile.X;
-    public int Y => Tile.Y;
+    public int X => Tile?.X ?? -1;
+    public int Y => Tile?.Y ?? -1;
 
     public event Action Changed;
     public void OnChange()

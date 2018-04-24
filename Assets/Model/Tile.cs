@@ -12,19 +12,16 @@ public class Tile : IDisplayable
     }
 
     public Building Building { get; set; }
-
-    public Resource Resource { get; set; }
     
     public int X { get; }
     public int Y { get; }
 
-    public bool Empty => Building == null && Resource == null && World.Current.JobManager.Jobs.All(j => j.Tile != this);
+    public bool Empty => Building == null && (World.Current?.JobManager?.Jobs?.All(j => j.Tile != this) ?? false);
 
     public bool HasBuilding => Building != null;
 
     public bool HasBuildingWithType(string type) => Building != null && Building.Type == type;
 
-    public bool HasResourceWithType(string type) => Resource != null && Resource.Type == type;
     
     public List<Tile> Neighbors
     {
@@ -37,16 +34,28 @@ public class Tile : IDisplayable
 
     public bool IsNeighbor(Tile other)
     {
-        return Mathf.Abs(X - other.X) + Mathf.Abs(Y - other.Y) <= 1;
+        if (other == null) return false;
+        try
+        {
+            return Mathf.Abs(X - other.X) + Mathf.Abs(Y - other.Y) <= 1;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
-    public Tile Up => World.Current[X, Y + 1];
-    public Tile Down => World.Current[X, Y - 1];
-    public Tile Right => World.Current[X + 1, Y];
-    public Tile Left => World.Current[X - 1, Y];
+    public Tile Up => World.Current?[X, Y + 1];
+    public Tile Down => World.Current?[X, Y - 1];
+    public Tile Right => World.Current?[X + 1, Y];
+    public Tile Left => World.Current?[X - 1, Y];
 
     public IEnumerable<Tile> TilesInRange(int range)
     {
+        if (range == 0) return new List<Tile>()
+        {
+            this
+        };
         List<Tile> inRange = new List<Tile>();
 
         for (int i = -range; i <= range; i++)

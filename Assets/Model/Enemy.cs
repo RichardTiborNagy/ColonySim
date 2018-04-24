@@ -91,6 +91,7 @@ public class Enemy : IDisplayable, IPrototypable
 
     public Enemy(Enemy other)
     {
+        if (other == null) return;
         Type = other.Type;
         Health = other.MaxHealth;
         MaxHealth = other.MaxHealth;

@@ -21,6 +21,7 @@ public class World : IDisplayable, IXmlSerializable
     public World(Difficulty difficulty, int size = 50)
     {
         Current = this;
+        size = Mathf.Max(size, 10);
         this._size = size;
         Tiles = new Tile[size, size];
         for (int i = 0; i < size; i++)

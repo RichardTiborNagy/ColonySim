@@ -9,6 +9,8 @@ public class Graph
 
     public Graph(World world)
     {
+        if (world == null) return;
+
         Nodes = new Dictionary<Tile, Node>();
 
         foreach (var tile in world.Tiles)
