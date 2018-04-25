@@ -1,10 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public enum Difficulty
+﻿namespace ColonySim
 {
-    Easy,
-    Medium,
-    Hard
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
+
+    public enum Difficulty
+    {
+        Easy,
+        Medium,
+        Hard
+    }
 }
