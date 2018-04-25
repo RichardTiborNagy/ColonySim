@@ -1,23 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class ProjectileView : View<Projectile>
+﻿namespace ColonySim
 {
-    private new void Awake()
-    {
-        base.Awake();
-        SpriteRenderer.sortingLayerName = "Entity";
-    }
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
 
-    protected override void Refresh()
+    public class ProjectileView : View<Projectile>
     {
-        UpdatePosition();
-        SpriteRenderer.sprite = SpriteManager.GetSprite(Target.Type);
-    }
+        private new void Awake()
+        {
+            base.Awake();
+            SpriteRenderer.sortingLayerName = "Entity";
+        }
 
-    protected override void UpdatePosition()
-    {
-        gameObject.transform.position = Target.Position;
+        protected override void Refresh()
+        {
+            UpdatePosition();
+            SpriteRenderer.sprite = SpriteManager.GetSprite(Target.Type);
+        }
+
+        protected override void UpdatePosition()
+        {
+            gameObject.transform.position = Target.Position;
+        }
     }
 }

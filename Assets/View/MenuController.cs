@@ -1,11 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class MenuController : MonoBehaviour
+﻿namespace ColonySim
 {
-    public void Quit()
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
+
+    public class MenuController : MonoBehaviour
     {
-        Application.Quit();
+        public void Quit()
+        {
+            Application.Quit();
+        }
     }
 }

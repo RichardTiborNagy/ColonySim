@@ -1,154 +1,163 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-
-
-public class Robot : IDisplayable, IPrototypable
+﻿namespace ColonySim
 {
-    public string Type { get; private set; }
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using UnityEngine;
 
-    public Tile Tile { get; set; }
 
-    public Tile NextTile { get; set; }
-
-    public Tile Destination { get; set; }
-
-    public float Charge { get; set; } = 100f;
-
-    public float MovementProgress { get; private set; }
-
-    public int Speed { get; private set; }
-
-    public Job Job { get; private set; }
-
-    public int Cost { get; private set; }
-
-    //public State State { get; private set; }
-
-    private Queue<Tile> Path;
-
-    private void GetJob()
+    public class Robot : IDisplayable, IPrototypable
     {
-        Job = World.Current.JobManager.TakeJob(this);
-    }
+        public string Type { get; private set; }
 
-    public void GiveUpJob()
-    {
-        if (Job.Type == "Charge") return;
-        World.Current.JobManager.GiveUpJob(this);
-        Job = null;
-        Destination = NextTile;
-        Path = null;
-    }
+        public Tile Tile { get; set; }
 
-    private bool HasJob => Job != null;
+        public Tile NextTile { get; set; }
 
-    private bool FindPathToTile(Tile destination)
-    {
-        MovementProgress = 0;
-        Path = Pathfinder.FindPath(Tile, destination);
-        return Path != null;
-    }
+        public Tile Destination { get; set; }
 
-    private void UpdateCharge(float deltaTime)
-    {
-        Charge -= deltaTime;
-        if (Charge < 10f)
+        public float Charge { get; set; } = 100f;
+
+        public float MovementProgress { get; private set; }
+
+        public int Speed { get; private set; }
+
+        public Job Job { get; private set; }
+
+        public int Cost { get; private set; }
+
+        //public State State { get; private set; }
+
+        private Queue<Tile> Path;
+
+        private void GetJob()
         {
-            if (Job != null && Job.Type != "Charge")
+            Job = World.Current.JobManager.TakeJob(this);
+        }
+
+        public void GiveUpJob()
+        {
+            if (Job.Type == "Charge") return;
+            World.Current.JobManager.GiveUpJob(this);
+            Job = null;
+            Destination = NextTile;
+            Path = null;
+        }
+
+        private bool HasJob => Job != null;
+
+        private bool FindPathToTile(Tile destination)
+        {
+            MovementProgress = 0;
+            Path = Pathfinder.FindPath(Tile, destination);
+            return Path != null;
+        }
+
+        private void UpdateCharge(float deltaTime)
+        {
+            Charge -= deltaTime;
+            if (Charge < 10f)
             {
-                GiveUpJob();
-            }
-            else if (Job != null)
-            {
-                return;
-            }
-            else
-            {
-                Job = new Job(Prototypes.Jobs.Get("Charge")) { Tile = World.Current.HeadQuarters.Tile, Robot = this };
-                Destination = Job.Tile;
+                if (Job != null && Job.Type != "Charge")
+                {
+                    GiveUpJob();
+                }
+                else if (Job != null)
+                {
+                    return;
+                }
+                else
+                {
+                    Job = new Job(Prototypes.Jobs.Get("Charge")) {Tile = World.Current.HeadQuarters.Tile, Robot = this};
+                    Destination = Job.Tile;
+                }
             }
         }
-    }
 
-    private void UpdateMovement(float deltaTime)
-    {
-        if (NextTile == null || NextTile == Tile)
+        private void UpdateMovement(float deltaTime)
         {
-            if (Path == null || Path.Count == 0)
+            if (NextTile == null || NextTile == Tile)
+            {
+                if (Path == null || Path.Count == 0)
+                {
+                    if (!FindPathToTile(Destination))
+                    {
+                        GiveUpJob();
+                        return;
+                    }
+                }
+
+                NextTile = Path.Dequeue();
+            }
+
+            if (NextTile.MovementCost <= 0)
             {
                 if (!FindPathToTile(Destination))
                 {
                     GiveUpJob();
                     return;
                 }
+
+                NextTile = Path.Dequeue();
             }
 
-            NextTile = Path.Dequeue();
-        }
+            MovementProgress += Speed * deltaTime / NextTile.MovementCost;
 
-        if (NextTile.MovementCost <= 0)
-        {
-            if (!FindPathToTile(Destination))
+            if (MovementProgress >= 1)
             {
-                GiveUpJob();
-                return;
+                Tile = NextTile;
+                MovementProgress = 0;
+                if (Destination.IsNeighbor(Tile))
+                {
+                    Path = null;
+                }
             }
-
-            NextTile = Path.Dequeue();
         }
 
-        MovementProgress += Speed * deltaTime / NextTile.MovementCost;
-
-        if (MovementProgress >= 1)
+        private void UpdateWork(float deltaTime)
         {
-            Tile = NextTile;
-            MovementProgress = 0;
-            if (Destination.IsNeighbor(Tile))
+            if (Job == null)
             {
-                Path = null;
+                GetJob();
+
+                if (Job != null)
+                {
+                    Destination = Job.Tile;
+                }
+            }
+
+            if (Job != null && Tile.IsNeighbor(Job.Tile))
+            {
+                Job.Work(deltaTime);
+                if (Job.IsComplete)
+                {
+                    Job = null;
+                }
             }
         }
-    }
 
-    private void UpdateWork(float deltaTime)
-    {
-        if (Job == null)
+        public void Update(float deltaTime)
         {
-            GetJob();
-
-            if (Job != null)
-            {
-                Destination = Job.Tile;
-            }
+            UpdateCharge(deltaTime);
+            UpdateMovement(deltaTime);
+            UpdateWork(deltaTime);
+            OnChange();
         }
 
-        if (Job != null && Tile.IsNeighbor(Job.Tile))
+        public Robot(string type, int speed, int cost)
         {
-            Job.Work(deltaTime);
-            if (Job.IsComplete)
-            {
-                Job = null;
-            }
+            Type = type;
+            Speed = speed;
+            MovementProgress = 0f;
+            Cost = cost;
         }
-    }
 
-    public void Update(float deltaTime)
-    {
-        UpdateCharge(deltaTime);
-        UpdateMovement(deltaTime);
-        UpdateWork(deltaTime);
-        OnChange();
-    }
-
-    public Robot(string type, int speed, int cost)
-    {
-        Type = type;
-        Speed = speed;
-        MovementProgress = 0f;
-        Cost = cost;
-    }
+        public Robot(Robot other)
+        {
+            Type = other.Type;
+            Speed = other.Speed;
+            Cost = other.Cost;
+        }
 
     public Robot(Robot other)
     {
@@ -157,23 +166,23 @@ public class Robot : IDisplayable, IPrototypable
         Speed = other.Speed;
         Cost = other.Cost;
     }
+        public Robot Clone(Robot other)
+        {
+            return new Robot(this);
+        }
 
-    public Robot Clone(Robot other)
-    {
-        return new Robot(this);
+        #region IDisplayable interface implementation
+
+        public int X => Tile.X;
+        public int Y => Tile.Y;
+
+        public event Action Changed;
+
+        public void OnChange()
+        {
+            Changed?.Invoke();
+        }
+
+        #endregion
     }
-
-    #region IDisplayable interface implementation
-
-    public int X => Tile.X;
-    public int Y => Tile.Y;
-
-    public event Action Changed;
-
-    public void OnChange()
-    {
-        Changed?.Invoke();
-    }
-
-    #endregion
 }

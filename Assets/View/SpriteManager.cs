@@ -1,35 +1,38 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public static class SpriteManager
+﻿namespace ColonySim
 {
-    private static readonly Dictionary<string, Sprite> Sprites;
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
 
-    public static Sprite GetSprite(string spriteName) => Sprites[spriteName];
-
-    static SpriteManager()
+    public static class SpriteManager
     {
-        Sprites = new Dictionary<string, Sprite>();
-        var spriteArray = Resources.LoadAll<Sprite>("");
-        foreach (var sprite in spriteArray)
+        private static readonly Dictionary<string, Sprite> Sprites;
+
+        public static Sprite GetSprite(string spriteName) => Sprites[spriteName];
+
+        static SpriteManager()
         {
-            Sprites.Add(sprite.name, sprite);
+            Sprites = new Dictionary<string, Sprite>();
+            var spriteArray = Resources.LoadAll<Sprite>("");
+            foreach (var sprite in spriteArray)
+            {
+                Sprites.Add(sprite.name, sprite);
+            }
         }
-    }
 
-    public static Sprite GetRandomTileSprite()
-    {
-        return Sprites["Tile_" + Random.Range(0, 8)];
-    }
+        public static Sprite GetRandomTileSprite()
+        {
+            return Sprites["Tile_" + Random.Range(0, 8)];
+        }
 
-    public static Sprite GetRandomRoadSprite()
-    {
-        return Sprites["Road_" + Random.Range(0, 8)];
-    }
+        public static Sprite GetRandomRoadSprite()
+        {
+            return Sprites["Road_" + Random.Range(0, 8)];
+        }
 
-    public static Sprite GetRandomTreeSprite()
-    {
-        return Sprites["Tree_" + Random.Range(0, 5)];
+        public static Sprite GetRandomTreeSprite()
+        {
+            return Sprites["Tree_" + Random.Range(0, 5)];
+        }
     }
 }
