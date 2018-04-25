@@ -1,18 +1,15 @@
-﻿namespace ColonySim
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Node
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using UnityEngine;
+    public Tile Tile;
 
-    public class Node
+    public List<Edge> Edges;
+
+    public Node(Tile tile)
     {
-        public Tile Tile;
-
-        public List<Edge> Edges;
-
-        public Node(Tile tile)
-        {
-            Tile = tile;
-        }
+        Tile = tile;
     }
 }

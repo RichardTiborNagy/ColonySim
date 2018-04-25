@@ -1,55 +1,52 @@
-﻿namespace ColonySim
-{
-    using System.Collections;
-    using System.Collections.Generic;
-    using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-    public class Graph
+public class Graph
+{
+
+    public Dictionary<Tile, Node> Nodes;
+
+    public Graph(World world)
     {
-        public Dictionary<Tile, Node> Nodes;
         if (world == null) return;
 
         Nodes = new Dictionary<Tile, Node>();
 
-        public Graph(World world)
+        foreach (var tile in world.Tiles)
         {
-            Nodes = new Dictionary<Tile, Node>();
+            Node node = new Node(tile);
 
-            foreach (var tile in world.Tiles)
-            {
-                Node node = new Node(tile);
-
-                Nodes.Add(tile, node);
-            }
-
-            foreach (var tile in Nodes.Keys)
-            {
-                CreateEdges(tile);
-            }
+            Nodes.Add(tile, node);
         }
 
-        private void CreateEdges(Tile tile)
-        {
-            var node = Nodes[tile];
-            //var neighbors = tile.Neighbors as List<Tile>;
-            node.Edges = new List<Edge>();
-
-            foreach (var neighbor in tile.Neighbors)
-            {
-                if (neighbor.MovementCost > 0)
-                {
-                    node.Edges.Add(new Edge(Nodes[neighbor], neighbor.MovementCost));
-                }
-            }
-        }
-
-        public void RecreateEdges(Tile tile)
+        foreach (var tile in Nodes.Keys)
         {
             CreateEdges(tile);
-            foreach (var neighbor in tile.Neighbors)
+        }
+    }
+
+    private void CreateEdges(Tile tile)
+    {
+        var node = Nodes[tile];
+        //var neighbors = tile.Neighbors as List<Tile>;
+        node.Edges = new List<Edge>();
+
+        foreach (var neighbor in tile.Neighbors)
+        {
+            if (neighbor.MovementCost > 0)
             {
-                CreateEdges(neighbor);
+                node.Edges.Add(new Edge(Nodes[neighbor], neighbor.MovementCost));
             }
+        }
+    }
+
+    public void RecreateEdges(Tile tile)
+    {
+        CreateEdges(tile);
+        foreach (var neighbor in tile.Neighbors)
+        {
+            CreateEdges(neighbor);
         }
     }
 }

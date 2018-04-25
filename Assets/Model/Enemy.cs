@@ -1,114 +1,94 @@
-﻿namespace ColonySim
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Enemy : IDisplayable, IPrototypable
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using UnityEngine;
+    public string Type { get; private set; }
 
-    public class Enemy : IDisplayable, IPrototypable
+    public int Health { get; set; }
+
+    public int MaxHealth { get; set; }
+
+    public Tile Tile { get; set; }
+
+    public Tile NextTile { get; set; }
+
+    public Tile Destination { get; set; }
+    
+    public float MovementProgress { get; private set; }
+
+    public int Speed { get; set; }
+
+    private Queue<Tile> Path;
+
+    private bool FindPathToHeadQuarter()
     {
-        public string Type { get; private set; }
+        Destination = World.Current.HeadQuarters.Tile;
+        MovementProgress = 0;
+        Path = Pathfinder.FindPath(Tile, World.Current.HeadQuarters.Tile);
+        return Path != null;
+    }
 
-        public int Health { get; set; }
-
-        public int MaxHealth { get; set; }
-
-        public Tile Tile { get; set; }
-
-        public Tile NextTile { get; set; }
-
-        public Tile Destination { get; set; }
-
-        public float MovementProgress { get; private set; }
-
-        public int Speed { get; set; }
-
-        private Queue<Tile> Path;
-
-        private bool FindPathToHeadQuarter()
+    public void Update(float deltaTime)
+    {
+        if (Health <= 0)
         {
-            Destination = World.Current.HeadQuarters.Tile;
-            MovementProgress = 0;
-            Path = Pathfinder.FindPath(Tile, World.Current.HeadQuarters.Tile);
-            return Path != null;
+            World.Current.DestroyEnemy(this);
         }
 
-        public void Update(float deltaTime)
+        if (NextTile == null || NextTile == Tile)
         {
-            if (Health <= 0)
-            {
-                World.Current.DestroyEnemy(this);
-            }
-
-            if (NextTile == null || NextTile == Tile)
-            {
-                if (Path == null || Path.Count == 0)
-                {
-                    if (!FindPathToHeadQuarter())
-                    {
-                        //GiveUpJob();
-                        return;
-                    }
-                }
-
-                NextTile = Path.Dequeue();
-            }
-
-            if (NextTile.MovementCost <= 0)
+            if (Path == null || Path.Count == 0)
             {
                 if (!FindPathToHeadQuarter())
                 {
                     //GiveUpJob();
                     return;
                 }
-
-                NextTile = Path.Dequeue();
             }
 
-            MovementProgress += Speed * deltaTime / NextTile.MovementCost;
+            NextTile = Path.Dequeue();
+        }
 
-            if (MovementProgress >= 1)
+        if (NextTile.MovementCost <= 0)
+        {
+            if (!FindPathToHeadQuarter())
             {
-                Tile = NextTile;
-                MovementProgress = 0;
-                if (Destination.IsNeighbor(Tile))
-                {
-                    Path = null;
-                    World.Current.Health -= this.Health;
-                    World.Current.DestroyEnemy(this);
-                }
+                //GiveUpJob();
+                return;
             }
 
-            OnChange();
+            NextTile = Path.Dequeue();
         }
 
-        public Enemy(string type, int speed, int maxHealth)
+        MovementProgress += Speed * deltaTime / NextTile.MovementCost;
+
+        if (MovementProgress >= 1)
         {
-            Type = type;
-            Speed = speed;
-            MaxHealth = maxHealth;
-            Health = maxHealth;
-            MovementProgress = 0f;
+            Tile = NextTile;
+            MovementProgress = 0;
+            if (Destination.IsNeighbor(Tile))
+            {
+                Path = null;
+                World.Current.Health -= this.Health;
+                World.Current.DestroyEnemy(this);
+            }
         }
 
-        public Enemy(Enemy other)
-        {
-            Type = other.Type;
-            Health = other.MaxHealth;
-            MaxHealth = other.MaxHealth;
-            Speed = other.Speed;
-            MovementProgress = 0f;
-        }
+        OnChange();
+    }
 
-        public Enemy Clone(Enemy other)
-        {
-            return new Enemy(this);
-        }
+    public Enemy(string type, int speed, int maxHealth)
+    {
+        Type = type;
+        Speed = speed;
+        MaxHealth = maxHealth;
+        Health = maxHealth;
+        MovementProgress = 0f;
+    }
 
-        #region IDisplayable interface implementation
-
-        public int X => Tile.X;
-        public int Y => Tile.Y;
     public Enemy(Enemy other)
     {
         if (other == null) return;
@@ -119,13 +99,22 @@
         MovementProgress = 0f;
     }
 
-        public event Action Changed;
-
-        public void OnChange()
-        {
-            Changed?.Invoke();
-        }
-
-        #endregion
+    public Enemy Clone(Enemy other)
+    {
+        return new Enemy(this);
     }
+
+    #region IDisplayable interface implementation
+
+    public int X => Tile.X;
+    public int Y => Tile.Y;
+
+    public event Action Changed;
+
+    public void OnChange()
+    {
+        Changed?.Invoke();
+    }
+
+    #endregion
 }

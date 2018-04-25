@@ -1,22 +1,19 @@
-﻿namespace ColonySim
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Edge
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using UnityEngine;
+    //Points to this
+    public Node Node;
 
-    public class Edge
+    //Weight
+    public float MovementCost;
+
+
+    public Edge(Node node, float movementCost)
     {
-        //Points to this
-        public Node Node;
-
-        //Weight
-        public float MovementCost;
-
-
-        public Edge(Node node, float movementCost)
-        {
-            Node = node;
-            MovementCost = movementCost;
-        }
+        Node = node;
+        MovementCost = movementCost;
     }
 }
