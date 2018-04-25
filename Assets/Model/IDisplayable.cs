@@ -1,11 +1,13 @@
 ﻿using System;
 
-public interface IDisplayable
+namespace ColonySim
 {
-    int X { get; }
-    int Y { get; }
+    public interface IDisplayable
+    {
+        event Action Changed;
+        int X { get; }
+        int Y { get; }
 
-    event Action Changed;
-
-    void OnChange();
+        void OnChange();
+    }
 }

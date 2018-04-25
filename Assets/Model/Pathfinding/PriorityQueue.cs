@@ -1,81 +1,67 @@
 ﻿using System.Collections.Generic;
-using Priority_Queue;
+using ColonySim.Priority_Queue;
 
-public class PriorityQueue<T>
+namespace ColonySim
 {
-    protected FastPriorityQueue<WrappedNode> wrappedQueue;
-
-    protected Dictionary<T, WrappedNode> mapDataToWrappedNode;
-
-    public PriorityQueue(int startingSize = 10)
+    public class PriorityQueue<T>
     {
-        if (startingSize < 0) return;
-        wrappedQueue = new FastPriorityQueue<WrappedNode>(startingSize);
-        mapDataToWrappedNode = new Dictionary<T, WrappedNode>();
-    }
+        protected Dictionary<T, WrappedNode> mapDataToWrappedNode;
+        protected FastPriorityQueue<WrappedNode> wrappedQueue;
 
-    public int Count
-    {
-        get
+        public PriorityQueue(int startingSize = 10)
         {
-            return wrappedQueue.Count;
-        }
-    }
-
-    public bool Contains(T data)
-    {
-        return mapDataToWrappedNode.ContainsKey(data);
-    }
-    
-    public void Enqueue(T data, float priority)
-    {
-        if (mapDataToWrappedNode.ContainsKey(data))
-        {
-            return;
+            if (startingSize < 0) return;
+            wrappedQueue = new FastPriorityQueue<WrappedNode>(startingSize);
+            mapDataToWrappedNode = new Dictionary<T, WrappedNode>();
         }
 
-        if (wrappedQueue.Count == wrappedQueue.MaxSize)
+        public int Count => wrappedQueue.Count;
+
+        public bool Contains(T data)
         {
-            wrappedQueue.Resize((2 * wrappedQueue.MaxSize) + 1);
+            return mapDataToWrappedNode.ContainsKey(data);
         }
 
-        WrappedNode newNode = new WrappedNode(data);
-        wrappedQueue.Enqueue(newNode, priority);
-        mapDataToWrappedNode[data] = newNode;
-    }
-
-    public void UpdatePriority(T data, float priority)
-    {
-        WrappedNode node = mapDataToWrappedNode[data];
-        wrappedQueue.UpdatePriority(node, priority);
-    }
-
-    public void EnqueueOrUpdate(T data, float priority)
-    {
-        if (mapDataToWrappedNode.ContainsKey(data))
+        public T Dequeue()
         {
-            UpdatePriority(data, priority);
+            var popped = wrappedQueue.Dequeue();
+            mapDataToWrappedNode.Remove(popped.Data);
+            return popped.Data;
         }
-        else
+
+        public void Enqueue(T data, float priority)
         {
-            Enqueue(data, priority);
+            if (mapDataToWrappedNode.ContainsKey(data)) return;
+
+            if (wrappedQueue.Count == wrappedQueue.MaxSize) wrappedQueue.Resize(2 * wrappedQueue.MaxSize + 1);
+
+            var newNode = new WrappedNode(data);
+            wrappedQueue.Enqueue(newNode, priority);
+            mapDataToWrappedNode[data] = newNode;
         }
-    }
 
-    public T Dequeue()
-    {
-        WrappedNode popped = wrappedQueue.Dequeue();
-        mapDataToWrappedNode.Remove(popped.Data);
-        return popped.Data;
-    }
-
-    protected class WrappedNode : FastPriorityQueueNode
-    {
-        public readonly T Data;
-
-        public WrappedNode(T data)
+        public void EnqueueOrUpdate(T data, float priority)
         {
-            this.Data = data;
+            if (mapDataToWrappedNode.ContainsKey(data))
+                UpdatePriority(data, priority);
+            else
+                Enqueue(data, priority);
+        }
+
+        public void UpdatePriority(T data, float priority)
+        {
+            var node = mapDataToWrappedNode[data];
+            wrappedQueue.UpdatePriority(node, priority);
+        }
+
+        protected class WrappedNode : FastPriorityQueueNode
+        {
+            public readonly T Data;
+
+            public WrappedNode(T data)
+            {
+                Data = data;
+            }
         }
     }
 }

@@ -1,23 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
-public class PrototypeManager<T> where T : IPrototypable
+namespace ColonySim
 {
-    private Dictionary<string, T> _prototypes;
-
-    public T Get(string type)
+    public class PrototypeManager<T> where T : IPrototypable
     {
-        return _prototypes[type];
-    }
+        private readonly Dictionary<string, T> _prototypes;
 
-    public void Add(T proto)
-    {
-        _prototypes.Add(proto.Type, proto);
-    }
+        public PrototypeManager()
+        {
+            _prototypes = new Dictionary<string, T>();
+        }
 
-    public PrototypeManager()
-    {
-        _prototypes = new Dictionary<string, T>();
+        public void Add(T proto)
+        {
+            _prototypes.Add(proto.Type, proto);
+        }
+
+        public T Get(string type)
+        {
+            return _prototypes[type];
+        }
     }
 }

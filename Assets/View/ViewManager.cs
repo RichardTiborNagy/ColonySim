@@ -1,20 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public static class ViewManager
+namespace ColonySim
 {
-    private static readonly Dictionary<string, GameObject> Views;
-
-    public static GameObject GetView(string viewName) => Views[viewName];
-
-    static ViewManager()
+    public static class ViewManager
     {
-        Views = new Dictionary<string, GameObject>();
-        var viewArray = Resources.LoadAll<GameObject>("");
-        foreach (var view in viewArray)
+        private static readonly Dictionary<string, GameObject> Views;
+
+        static ViewManager()
         {
-            Views.Add(view.name, view);
+            Views = new Dictionary<string, GameObject>();
+            var viewArray = Resources.LoadAll<GameObject>("");
+            foreach (var view in viewArray) Views.Add(view.name, view);
+        }
+
+        public static GameObject GetView(string viewName)
+        {
+            return Views[viewName];
         }
     }
 }

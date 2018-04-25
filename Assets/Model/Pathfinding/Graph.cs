@@ -1,52 +1,42 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
-public class Graph
+namespace ColonySim
 {
-
-    public Dictionary<Tile, Node> Nodes;
-
-    public Graph(World world)
+    public class Graph
     {
-        if (world == null) return;
+        public Dictionary<Tile, Node> Nodes;
 
-        Nodes = new Dictionary<Tile, Node>();
-
-        foreach (var tile in world.Tiles)
+        public Graph(World world)
         {
-            Node node = new Node(tile);
+            if (world == null) return;
 
-            Nodes.Add(tile, node);
+            Nodes = new Dictionary<Tile, Node>();
+
+            foreach (var tile in world.Tiles)
+            {
+                var node = new Node(tile);
+
+                Nodes.Add(tile, node);
+            }
+
+            foreach (var tile in Nodes.Keys) CreateEdges(tile);
         }
 
-        foreach (var tile in Nodes.Keys)
+        public void RecreateEdges(Tile tile)
         {
             CreateEdges(tile);
+            foreach (var neighbor in tile.Neighbors) CreateEdges(neighbor);
         }
-    }
 
-    private void CreateEdges(Tile tile)
-    {
-        var node = Nodes[tile];
-        //var neighbors = tile.Neighbors as List<Tile>;
-        node.Edges = new List<Edge>();
-
-        foreach (var neighbor in tile.Neighbors)
+        private void CreateEdges(Tile tile)
         {
-            if (neighbor.MovementCost > 0)
-            {
-                node.Edges.Add(new Edge(Nodes[neighbor], neighbor.MovementCost));
-            }
-        }
-    }
+            var node = Nodes[tile];
+            //var neighbors = tile.Neighbors as List<Tile>;
+            node.Edges = new List<Edge>();
 
-    public void RecreateEdges(Tile tile)
-    {
-        CreateEdges(tile);
-        foreach (var neighbor in tile.Neighbors)
-        {
-            CreateEdges(neighbor);
+            foreach (var neighbor in tile.Neighbors)
+                if (neighbor.MovementCost > 0)
+                    node.Edges.Add(new Edge(Nodes[neighbor], neighbor.MovementCost));
         }
     }
 }

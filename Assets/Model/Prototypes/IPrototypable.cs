@@ -1,4 +1,7 @@
-﻿public interface IPrototypable
+﻿namespace ColonySim
 {
-    string Type { get; }
+    public interface IPrototypable
+    {
+        string Type { get; }
+    }
 }
