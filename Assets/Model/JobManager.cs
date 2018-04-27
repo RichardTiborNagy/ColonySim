@@ -40,11 +40,12 @@ namespace ColonySim
 
         public void CreateJob(Job protoJob, Tile tile, float amountDone = 0)
         {
-            if (protoJob == null || tile == null || world.Resources < protoJob.Cost && amountDone == 0 ||
+            if (protoJob?.CanCreate == null || tile == null || world == null || Jobs == null ||
+                world?.Resources < protoJob.Cost && amountDone == 0 ||
                 Jobs.Any(j => tile == j.Tile) || !protoJob.CanCreate(tile)) return;
             if (amountDone == 0) world.Resources -= protoJob.Cost;
             var jobToCreate = new Job(protoJob) {Tile = tile, AmountDone = amountDone};
-            AvailableJobs.Add(jobToCreate);
+            AvailableJobs?.Add(jobToCreate);
             world.OnChange();
         }
 

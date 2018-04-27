@@ -52,8 +52,8 @@ namespace ColonySim
 
         public float? UpdateInterval { get; set; }
 
-        public int X => Tile.X;
-        public int Y => Tile.Y;
+        public int X => Tile?.X ?? -1;
+        public int Y => Tile?.Y ?? -1;
 
         public void OnChange()
         {

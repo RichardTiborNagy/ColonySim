@@ -32,6 +32,11 @@ namespace ColonySim
         public int X => (int) Position.x;
         public int Y => (int) Position.y;
 
+        public void SetPosition(int x, int y)
+        {
+            Position = new Vector2(x, y);
+        }
+
         private Action<Projectile> OnHit { get; }
 
         public void OnChange()
@@ -43,7 +48,7 @@ namespace ColonySim
         {
             if (Target == null)
             {
-                World.Current.DestroyProjectile(this);
+                World.Current?.DestroyProjectile(this);
                 return;
             }
 

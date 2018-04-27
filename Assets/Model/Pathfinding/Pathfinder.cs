@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.VR;
 
 namespace ColonySim
 {
@@ -10,7 +11,7 @@ namespace ColonySim
 
         public static Queue<Tile> FindPath(Tile starTile, Tile destinationTile)
         {
-            if (starTile == null || destinationTile == null) return null;
+            if ( starTile == null || destinationTile == null || (!world?.Graph?.Nodes.ContainsKey(starTile) ?? true)) return null;
 
             world = World.Current;
 
@@ -25,11 +26,9 @@ namespace ColonySim
 
             var cameFrom = new Dictionary<Node, Node>();
 
-            var gScore = new Dictionary<Node, float>();
-            gScore[start] = 0;
+            var gScore = new Dictionary<Node, float> {[start] = 0};
 
-            var fScore = new Dictionary<Node, float>();
-            fScore[start] = ManhattanDistance(start.Tile, destinationTile);
+            var fScore = new Dictionary<Node, float> {[start] = ManhattanDistance(start.Tile, destinationTile)};
 
             while (openSet.Count > 0)
             {

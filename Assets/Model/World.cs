@@ -4,8 +4,8 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using UnityEngine;
-using Random = UnityEngine.Random;
+//using UnityEngine;
+//using Random = UnityEngine.Random;
 
 namespace ColonySim
 {
@@ -15,10 +15,14 @@ namespace ColonySim
 
         private int _size;
 
+        private Random random;
+
         public World(Difficulty difficulty, int size = 50)
         {
+            random = new Random();
+
             Current = this;
-            size = Mathf.Max(size, 10);
+            size = Math.Max(size, 10);
             _size = size;
             Tiles = new Tile[size, size];
             for (var i = 0; i < size; i++)
@@ -46,6 +50,8 @@ namespace ColonySim
 
         public World()
         {
+            random = new Random();
+
             Current = this;
 
             Buildings = new List<Building>();
@@ -101,7 +107,7 @@ namespace ColonySim
 
         public void CreateBuilding(Building protoBuilding, Tile tile)
         {
-            if (tile.HasBuilding) return;
+            if (tile?.HasBuilding != null && (bool) tile?.HasBuilding || protoBuilding == null) return;
 
             var tilesToOccupy = new List<Tile>();
 
@@ -144,11 +150,12 @@ namespace ColonySim
 
         public void CreateProjectile(Projectile protoProjectile, Tile tile, Enemy target)
         {
+            if (protoProjectile == null || tile == null || target == null) return;
             var projectileToCreate = new Projectile(protoProjectile)
             {
                 Target = target,
-                Position = new Vector2(tile.X, tile.Y)
             };
+            projectileToCreate.SetPosition(tile.X, tile.Y);
             Projectiles.Add(projectileToCreate);
             OnChange();
         }
@@ -156,7 +163,7 @@ namespace ColonySim
 
         public void CreateRobot(Robot protoRobot, Tile tile, float charge = 0)
         {
-            if (protoRobot.Cost > Resources && charge == 0) return;
+            if (protoRobot == null || tile == null || protoRobot.Cost > Resources && charge == 0) return;
             var robotToCreate = new Robot(protoRobot);
             Robots.Add(robotToCreate);
             robotToCreate.Tile = robotToCreate.Destination = robotToCreate.NextTile = tile;
@@ -168,7 +175,7 @@ namespace ColonySim
 
         public void DemolishBuilding(Tile tile)
         {
-            if (!tile.HasBuilding) return;
+            if (tile == null || (bool) !tile?.HasBuilding) return;
             var buildingToDemolish = tile.Building;
             var mainTile = buildingToDemolish.Tile;
             var tilesToDemolish = new List<Tile>();
@@ -194,12 +201,14 @@ namespace ColonySim
 
         public void DestroyEnemy(Enemy enemy)
         {
+            if (enemy == null) return;
             Enemies.Remove(enemy);
             OnChange();
         }
 
         public void DestroyProjectile(Projectile projectile)
         {
+            if (projectile == null) return;
             Projectiles.Remove(projectile);
             OnChange();
         }
@@ -216,6 +225,7 @@ namespace ColonySim
 
         public void ReadXml(XmlReader reader)
         {
+            if (reader == null) return;
             _size = int.Parse(reader.GetAttribute("Size"));
             Resources = int.Parse(reader.GetAttribute("Resources"));
             RemainingTime = float.Parse(reader.GetAttribute("RemainingTime"));
@@ -272,6 +282,7 @@ namespace ColonySim
 
         public void WriteXml(XmlWriter writer)
         {
+            if (writer == null) return;
             writer.WriteAttributeString("Size", _size.ToString());
             writer.WriteAttributeString("Resources", Resources.ToString());
             writer.WriteAttributeString("RemainingTime", RemainingTime.ToString());
@@ -332,7 +343,7 @@ namespace ColonySim
 
         private void GenerateEnvironment(int size, Difficulty difficulty)
         {
-            CreateBuilding(Prototypes.Buildings.Get("HeadQuarter"), Tiles[24, 24]);
+            CreateBuilding(Prototypes.Buildings.Get("HeadQuarter"), Tiles[size/2, size/2]);
             switch (difficulty)
             {
                 case Difficulty.Easy:
@@ -354,8 +365,8 @@ namespace ColonySim
 
             for (var i = 0; i < 200; i++)
             {
-                var x = Random.Range(0, size);
-                var y = Random.Range(0, size);
+                var x = random.Next(0, size);
+                var y = random.Next(0, size);
                 CreateBuilding(Prototypes.Buildings.Get("Tree"), Tiles[x, y]);
             }
         }
@@ -407,7 +418,7 @@ namespace ColonySim
         private void UpdateBuildings(float deltaTime)
         {
             Buildings.ForEach(building => building.Update(deltaTime));
-            var spawnerInterval = Mathf.Max(1f, RemainingTime / StartingTime * 5);
+            var spawnerInterval = Math.Max(1f, RemainingTime / StartingTime * 5);
             foreach (var building in Buildings.Where(b => b.Type == "Spawner"))
                 building.UpdateInterval = spawnerInterval;
         }

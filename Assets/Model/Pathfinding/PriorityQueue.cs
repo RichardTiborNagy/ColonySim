@@ -10,20 +10,21 @@ namespace ColonySim
 
         public PriorityQueue(int startingSize = 10)
         {
-            if (startingSize < 0) return;
+            if (startingSize < 1 || startingSize > 4096) return;
             wrappedQueue = new FastPriorityQueue<WrappedNode>(startingSize);
             mapDataToWrappedNode = new Dictionary<T, WrappedNode>();
         }
 
-        public int Count => wrappedQueue.Count;
+        public int Count => wrappedQueue?.Count ?? 0;
 
         public bool Contains(T data)
         {
-            return mapDataToWrappedNode.ContainsKey(data);
+            return mapDataToWrappedNode?.ContainsKey(data) ?? false;
         }
 
         public T Dequeue()
         {
+            if (Count == 0) return default(T);
             var popped = wrappedQueue.Dequeue();
             mapDataToWrappedNode.Remove(popped.Data);
             return popped.Data;
@@ -31,7 +32,7 @@ namespace ColonySim
 
         public void Enqueue(T data, float priority)
         {
-            if (mapDataToWrappedNode.ContainsKey(data)) return;
+            if (data == null || (mapDataToWrappedNode?.ContainsKey(data) ?? true)) return;
 
             if (wrappedQueue.Count == wrappedQueue.MaxSize) wrappedQueue.Resize(2 * wrappedQueue.MaxSize + 1);
 
@@ -42,6 +43,7 @@ namespace ColonySim
 
         public void EnqueueOrUpdate(T data, float priority)
         {
+            if (data == null || mapDataToWrappedNode == null) return;
             if (mapDataToWrappedNode.ContainsKey(data))
                 UpdatePriority(data, priority);
             else
@@ -50,6 +52,7 @@ namespace ColonySim
 
         public void UpdatePriority(T data, float priority)
         {
+            if (data == null || (!mapDataToWrappedNode?.ContainsKey(data) ?? true)) return;
             var node = mapDataToWrappedNode[data];
             wrappedQueue.UpdatePriority(node, priority);
         }

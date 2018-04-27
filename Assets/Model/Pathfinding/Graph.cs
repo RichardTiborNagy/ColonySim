@@ -24,6 +24,7 @@ namespace ColonySim
 
         public void RecreateEdges(Tile tile)
         {
+            if (tile == null) return;
             CreateEdges(tile);
             foreach (var neighbor in tile.Neighbors) CreateEdges(neighbor);
         }

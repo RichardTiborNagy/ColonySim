@@ -16,7 +16,7 @@ namespace ColonySim
 
         public static GameObject GetView(string viewName)
         {
-            return Views[viewName];
+            return !Views.ContainsKey(viewName) ? null : Views[viewName];
         }
     }
 }

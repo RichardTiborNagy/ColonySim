@@ -10,4 +10,5 @@ using System;
 [assembly: InternalsVisibleTo("ColonySim.Tests")]
 [assembly: InternalsVisibleTo("Assembly-CSharp.Explorables")]
 [assembly: InternalsVisibleTo("ColonySim.Tests")]
+[assembly: InternalsVisibleTo("ColonySim.Tests")]
 

@@ -13,11 +13,13 @@ namespace ColonySim
 
         public void Add(T proto)
         {
-            _prototypes.Add(proto.Type, proto);
+            if (proto == null || proto.Type == null) return;
+            _prototypes?.Add(proto.Type, proto);
         }
 
         public T Get(string type)
         {
+            if (type == null || _prototypes == null || !_prototypes.ContainsKey(type)) return default(T);
             return _prototypes[type];
         }
     }
