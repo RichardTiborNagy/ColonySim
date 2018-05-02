@@ -11,7 +11,7 @@ namespace ColonySim
 {
     public class World : IDisplayable, IXmlSerializable
     {
-        private const float StartingTime = 300f;
+        private const float StartingTime = 180f;
 
         private int _size;
 
@@ -45,7 +45,11 @@ namespace ColonySim
 
             GenerateEnvironment(size, difficulty);
 
-            RemainingTime = StartingTime;
+            var diffNumber = (int) difficulty;
+
+            RemainingTime = StartingTime + diffNumber * 60;
+
+            Resources = 700 - diffNumber * 100;
         }
 
         public World()
@@ -344,6 +348,7 @@ namespace ColonySim
 
         private void GenerateEnvironment(int size, Difficulty difficulty)
         {
+            var diffNumber = (int) difficulty;
             CreateBuilding(Prototypes.Buildings.Get("HeadQuarter"), Tiles[size/2, size/2]);
             switch (difficulty)
             {
@@ -364,7 +369,9 @@ namespace ColonySim
                     return;
             }
 
-            for (var i = 0; i < 200; i++)
+            var numberOfTrees = 300 - (diffNumber * 50);
+
+            for (var i = 0; i < numberOfTrees; i++)
             {
                 var x = random.Next(0, size);
                 var y = random.Next(0, size);
