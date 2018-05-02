@@ -36,6 +36,7 @@ namespace ColonySim
             var serializer = new XmlSerializer(typeof(World));
             TextReader reader = new StringReader(PlayerPrefs.GetString("SaveGame"));
             World = (World) serializer.Deserialize(reader);
+            Pause(true);
             reader.Close();
 
             foreach (var keyValuePair in TileViews) Destroy(keyValuePair.Value);
@@ -58,12 +59,13 @@ namespace ColonySim
             ProjectileViews = new Dictionary<Projectile, GameObject>();
             SetTarget(World);
             Refresh();
-            Pause();
+            Pause(false);
         }
 
         public void NewGame(int difficulty)
         {
             World = new World((Difficulty) difficulty);
+            Pause(true);
             foreach (var keyValuePair in TileViews) Destroy(keyValuePair.Value);
 
             foreach (var keyValuePair in BuildingViews) Destroy(keyValuePair.Value);
@@ -84,7 +86,7 @@ namespace ColonySim
             ProjectileViews = new Dictionary<Projectile, GameObject>();
             SetTarget(World);
             Refresh();
-            Pause();
+            Pause(false);
         }
 
         public void SaveWorld()
@@ -101,10 +103,14 @@ namespace ColonySim
 
         public void Update()
         {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Pause(!World.Paused);
+                return;
+            }
             World.Update(Time.deltaTime);
             ResourceWidget.GetComponentInChildren<Text>().text = $"Resources: {World.Resources}";
             HealthWidget.GetComponentInChildren<Text>().text = $"Health: {World.Health}";
-            if (Input.GetKeyDown(KeyCode.Escape)) Pause();
 
             TimeWidget.GetComponentInChildren<Text>().text = $"Time left: {Mathf.RoundToInt(World.RemainingTime)}";
             if (!World.Paused) CheckGameOver();
@@ -207,24 +213,29 @@ namespace ColonySim
 
         private void CheckGameOver()
         {
-            if (World.RemainingTime < 0)
+            if (World.NoPathToHeadQuarter)
             {
-                Pause();
+                Pause(true);
+                Text.GetComponentInChildren<Text>().text = "No path to the HeadQuarter!";
+            }
+            else if (World.RemainingTime < 0)
+            {
+                Pause(true);
                 Text.GetComponentInChildren<Text>().text = "You won!";
             }
             else if (World.Health < 0)
             {
-                Pause();
+                Pause(true);
                 Text.GetComponentInChildren<Text>().text = "You lost!";
             }
         }
 
-        private void Pause()
+        private void Pause(bool pause)
         {
-            World.Paused = !World.Paused;
+            World.Paused = pause;
             Text.GetComponentInChildren<Text>().text = "Game paused";
-            GameplayCanvas.SetActive(!GameplayCanvas.active);
-            MenuCanvas.SetActive(!MenuCanvas.active);
+            GameplayCanvas.SetActive(!pause);
+            MenuCanvas.SetActive(pause);
         }
     }
 }

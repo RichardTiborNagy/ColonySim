@@ -98,6 +98,10 @@ namespace ColonySim
             Destination = World.Current.HeadQuarters.Tile;
             MovementProgress = 0;
             Path = Pathfinder.FindPath(Tile, World.Current.HeadQuarters.Tile);
+            if (Path == null)
+            {
+                World.Current.NoPathToHeadQuarter = true;
+            }
             return Path != null;
         }
     }

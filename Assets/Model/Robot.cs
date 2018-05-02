@@ -56,7 +56,7 @@ namespace ColonySim
 
         public void GiveUpJob()
         {
-            if (Job.Type == "Charge") return;
+            if (Job?.Type == "Charge") return;
             World.Current.JobManager.GiveUpJob(this);
             Job = null;
             Destination = NextTile;

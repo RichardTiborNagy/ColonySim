@@ -94,6 +94,7 @@ namespace ColonySim
         public int X => 0;
 
         public int Y => 0;
+        public bool NoPathToHeadQuarter { get; set; }
 
         public Tile this[int x, int y]
         {
@@ -417,25 +418,53 @@ namespace ColonySim
 
         private void UpdateBuildings(float deltaTime)
         {
-            Buildings.ForEach(building => building.Update(deltaTime));
-            var spawnerInterval = Math.Max(1f, RemainingTime / StartingTime * 5);
-            foreach (var building in Buildings.Where(b => b.Type == "Spawner"))
-                building.UpdateInterval = spawnerInterval;
+            try
+            {
+                Buildings.ForEach(building => building.Update(deltaTime));
+                var spawnerInterval = Math.Max(1f, RemainingTime / StartingTime * 5);
+                foreach (var building in Buildings.Where(b => b.Type == "Spawner"))
+                    building.UpdateInterval = spawnerInterval;
+            }
+            catch
+            {
+                return;
+            }
         }
 
         private void UpdateEnemies(float deltaTime)
         {
-            Enemies.ForEach(enemy => enemy.Update(deltaTime));
+            try
+            {
+                Enemies.ForEach(enemy => enemy.Update(deltaTime));
+            }
+            catch
+            {
+                return;
+            }
         }
 
         private void UpdateProjectiles(float deltaTime)
         {
-            Projectiles.ForEach(projectile => projectile.Update(deltaTime));
+            try
+            {
+                Projectiles.ForEach(projectile => projectile.Update(deltaTime));
+            }
+            catch
+            {
+                return;
+            }
         }
 
         private void UpdateRobots(float deltaTime)
         {
-            Robots.ForEach(robot => robot.Update(deltaTime));
+            try
+            {
+                Robots.ForEach(robot => robot.Update(deltaTime));
+            }
+            catch
+            {
+                return;
+            }
         }
     }
 }

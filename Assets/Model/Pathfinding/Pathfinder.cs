@@ -11,10 +11,13 @@ namespace ColonySim
 
         public static Queue<Tile> FindPath(Tile starTile, Tile destinationTile)
         {
+            if (world != World.Current)
+            {
+                world = World.Current;
+            }
+
             if ( starTile == null || destinationTile == null || (!world?.Graph?.Nodes.ContainsKey(starTile) ?? true)) return null;
-
-            world = World.Current;
-
+            
             var nodes = world.Graph.Nodes;
 
             var start = nodes[starTile];
